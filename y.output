@@ -1,0 +1,1323 @@
+Terminals unused in grammar
+
+    AND
+    OR
+
+
+State 46 conflicts: 9 shift/reduce
+State 62 conflicts: 2 reduce/reduce
+State 93 conflicts: 4 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: declaration
+    2        | program declaration
+
+    3 declaration: function_definition
+
+    4 function_definition: datatype ID '(' arguments_definition ')' '{' body return '}'
+
+    5 arguments_definition: argument_definition
+    6                     | arguments_definition ',' argument_definition
+
+    7 argument_definition: datatype ID
+
+    8 datatype: INT
+    9         | FLOAT
+   10         | CHAR
+   11         | VOID
+
+   12 body: FOR '(' statement ';' condition ';' statement ')' '{' body '}'
+   13     | WHILE '(' statement ')' '{' body '}'
+   14     | IF '(' condition ')' '{' body '}' else
+   15     | statement ';'
+   16     | body body
+   17     | predefined_function ';'
+   18     | defined_function ';'
+
+   19 predefined_function: PUTCHAR '(' STRING ')'
+
+   20 defined_function: ID '(' arguments_expression ')'
+
+   21 arguments_expression: argument_expression
+   22                     | argument_expression ',' arguments_expression
+
+   23 argument_expression: ID
+   24                    | value
+
+   25 else: ELSE '{' body '}'
+   26     | ε
+
+   27 condition: value relop value
+   28          | TRUE
+   29          | FALSE
+
+   30 statement: datatype ID init
+   31          | ID '=' expression
+   32          | ID relop expression
+
+   33 init: '=' value
+   34     | ε
+
+   35 expression: expression arithmetic expression
+   36           | value
+
+   37 arithmetic: ADD
+   38           | SUB
+   39           | MUL
+   40           | DIV
+
+   41 relop: LT
+   42      | GT
+   43      | LE
+   44      | GE
+   45      | EQ
+   46      | NE
+
+   47 value: NUMBER
+   48      | FLOAT_NUM
+   49      | CHARACTER
+   50      | ID
+
+   51 return: RETURN value ';'
+   52       | ε
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '(' (40) 4 12 13 14 19 20
+    ')' (41) 4 12 13 14 19 20
+    ',' (44) 6 22
+    ';' (59) 12 15 17 18 51
+    '=' (61) 31 33
+    '{' (123) 4 12 13 14 25
+    '}' (125) 4 12 13 14 25
+    error (256)
+    INT (258) 8
+    FLOAT (259) 9
+    CHAR (260) 10
+    VOID (261) 11
+    RETURN (262) 51
+    FOR (263) 12
+    WHILE (264) 13
+    IF (265) 14
+    ELSE (266) 25
+    LT (267) 41
+    GT (268) 42
+    LE (269) 43
+    GE (270) 44
+    EQ (271) 45
+    NE (272) 46
+    AND (273)
+    OR (274)
+    ADD (275) 37
+    SUB (276) 38
+    DIV (277) 40
+    MUL (278) 39
+    TRUE (279) 28
+    FALSE (280) 29
+    NUMBER (281) 47
+    FLOAT_NUM (282) 48
+    ID (283) 4 7 20 23 30 31 32 50
+    STRING (284) 19
+    CHARACTER (285) 49
+    PUTCHAR (286) 19
+
+
+Nonterminals, with rules where they appear
+
+    $accept (39)
+        on left: 0
+    program (40)
+        on left: 1 2
+        on right: 0 2
+    declaration (41)
+        on left: 3
+        on right: 1 2
+    function_definition (42)
+        on left: 4
+        on right: 3
+    arguments_definition (43)
+        on left: 5 6
+        on right: 4 6
+    argument_definition (44)
+        on left: 7
+        on right: 5 6
+    datatype (45)
+        on left: 8 9 10 11
+        on right: 4 7 30
+    body (46)
+        on left: 12 13 14 15 16 17 18
+        on right: 4 12 13 14 16 25
+    predefined_function (47)
+        on left: 19
+        on right: 17
+    defined_function (48)
+        on left: 20
+        on right: 18
+    arguments_expression (49)
+        on left: 21 22
+        on right: 20 22
+    argument_expression (50)
+        on left: 23 24
+        on right: 21 22
+    else (51)
+        on left: 25 26
+        on right: 14
+    condition (52)
+        on left: 27 28 29
+        on right: 12 14
+    statement (53)
+        on left: 30 31 32
+        on right: 12 13 15
+    init (54)
+        on left: 33 34
+        on right: 30
+    expression (55)
+        on left: 35 36
+        on right: 31 32 35
+    arithmetic (56)
+        on left: 37 38 39 40
+        on right: 35
+    relop (57)
+        on left: 41 42 43 44 45 46
+        on right: 27 32
+    value (58)
+        on left: 47 48 49 50
+        on right: 24 27 33 36 51
+    return (59)
+        on left: 51 52
+        on right: 4
+
+
+State 0
+
+    0 $accept: • program $end
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    CHAR   shift, and go to state 3
+    VOID   shift, and go to state 4
+
+    program              go to state 5
+    declaration          go to state 6
+    function_definition  go to state 7
+    datatype             go to state 8
+
+
+State 1
+
+    8 datatype: INT •
+
+    $default  reduce using rule 8 (datatype)
+
+
+State 2
+
+    9 datatype: FLOAT •
+
+    $default  reduce using rule 9 (datatype)
+
+
+State 3
+
+   10 datatype: CHAR •
+
+    $default  reduce using rule 10 (datatype)
+
+
+State 4
+
+   11 datatype: VOID •
+
+    $default  reduce using rule 11 (datatype)
+
+
+State 5
+
+    0 $accept: program • $end
+    2 program: program • declaration
+
+    $end   shift, and go to state 9
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    CHAR   shift, and go to state 3
+    VOID   shift, and go to state 4
+
+    declaration          go to state 10
+    function_definition  go to state 7
+    datatype             go to state 8
+
+
+State 6
+
+    1 program: declaration •
+
+    $default  reduce using rule 1 (program)
+
+
+State 7
+
+    3 declaration: function_definition •
+
+    $default  reduce using rule 3 (declaration)
+
+
+State 8
+
+    4 function_definition: datatype • ID '(' arguments_definition ')' '{' body return '}'
+
+    ID  shift, and go to state 11
+
+
+State 9
+
+    0 $accept: program $end •
+
+    $default  accept
+
+
+State 10
+
+    2 program: program declaration •
+
+    $default  reduce using rule 2 (program)
+
+
+State 11
+
+    4 function_definition: datatype ID • '(' arguments_definition ')' '{' body return '}'
+
+    '('  shift, and go to state 12
+
+
+State 12
+
+    4 function_definition: datatype ID '(' • arguments_definition ')' '{' body return '}'
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    CHAR   shift, and go to state 3
+    VOID   shift, and go to state 4
+
+    arguments_definition  go to state 13
+    argument_definition   go to state 14
+    datatype              go to state 15
+
+
+State 13
+
+    4 function_definition: datatype ID '(' arguments_definition • ')' '{' body return '}'
+    6 arguments_definition: arguments_definition • ',' argument_definition
+
+    ')'  shift, and go to state 16
+    ','  shift, and go to state 17
+
+
+State 14
+
+    5 arguments_definition: argument_definition •
+
+    $default  reduce using rule 5 (arguments_definition)
+
+
+State 15
+
+    7 argument_definition: datatype • ID
+
+    ID  shift, and go to state 18
+
+
+State 16
+
+    4 function_definition: datatype ID '(' arguments_definition ')' • '{' body return '}'
+
+    '{'  shift, and go to state 19
+
+
+State 17
+
+    6 arguments_definition: arguments_definition ',' • argument_definition
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    CHAR   shift, and go to state 3
+    VOID   shift, and go to state 4
+
+    argument_definition  go to state 20
+    datatype             go to state 15
+
+
+State 18
+
+    7 argument_definition: datatype ID •
+
+    $default  reduce using rule 7 (argument_definition)
+
+
+State 19
+
+    4 function_definition: datatype ID '(' arguments_definition ')' '{' • body return '}'
+
+    INT      shift, and go to state 1
+    FLOAT    shift, and go to state 2
+    CHAR     shift, and go to state 3
+    VOID     shift, and go to state 4
+    FOR      shift, and go to state 21
+    WHILE    shift, and go to state 22
+    IF       shift, and go to state 23
+    ID       shift, and go to state 24
+    PUTCHAR  shift, and go to state 25
+
+    datatype             go to state 26
+    body                 go to state 27
+    predefined_function  go to state 28
+    defined_function     go to state 29
+    statement            go to state 30
+
+
+State 20
+
+    6 arguments_definition: arguments_definition ',' argument_definition •
+
+    $default  reduce using rule 6 (arguments_definition)
+
+
+State 21
+
+   12 body: FOR • '(' statement ';' condition ';' statement ')' '{' body '}'
+
+    '('  shift, and go to state 31
+
+
+State 22
+
+   13 body: WHILE • '(' statement ')' '{' body '}'
+
+    '('  shift, and go to state 32
+
+
+State 23
+
+   14 body: IF • '(' condition ')' '{' body '}' else
+
+    '('  shift, and go to state 33
+
+
+State 24
+
+   20 defined_function: ID • '(' arguments_expression ')'
+   31 statement: ID • '=' expression
+   32          | ID • relop expression
+
+    LT   shift, and go to state 34
+    GT   shift, and go to state 35
+    LE   shift, and go to state 36
+    GE   shift, and go to state 37
+    EQ   shift, and go to state 38
+    NE   shift, and go to state 39
+    '('  shift, and go to state 40
+    '='  shift, and go to state 41
+
+    relop  go to state 42
+
+
+State 25
+
+   19 predefined_function: PUTCHAR • '(' STRING ')'
+
+    '('  shift, and go to state 43
+
+
+State 26
+
+   30 statement: datatype • ID init
+
+    ID  shift, and go to state 44
+
+
+State 27
+
+    4 function_definition: datatype ID '(' arguments_definition ')' '{' body • return '}'
+   16 body: body • body
+
+    INT      shift, and go to state 1
+    FLOAT    shift, and go to state 2
+    CHAR     shift, and go to state 3
+    VOID     shift, and go to state 4
+    RETURN   shift, and go to state 45
+    FOR      shift, and go to state 21
+    WHILE    shift, and go to state 22
+    IF       shift, and go to state 23
+    ID       shift, and go to state 24
+    PUTCHAR  shift, and go to state 25
+
+    $default  reduce using rule 52 (return)
+
+    datatype             go to state 26
+    body                 go to state 46
+    predefined_function  go to state 28
+    defined_function     go to state 29
+    statement            go to state 30
+    return               go to state 47
+
+
+State 28
+
+   17 body: predefined_function • ';'
+
+    ';'  shift, and go to state 48
+
+
+State 29
+
+   18 body: defined_function • ';'
+
+    ';'  shift, and go to state 49
+
+
+State 30
+
+   15 body: statement • ';'
+
+    ';'  shift, and go to state 50
+
+
+State 31
+
+   12 body: FOR '(' • statement ';' condition ';' statement ')' '{' body '}'
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    CHAR   shift, and go to state 3
+    VOID   shift, and go to state 4
+    ID     shift, and go to state 51
+
+    datatype   go to state 26
+    statement  go to state 52
+
+
+State 32
+
+   13 body: WHILE '(' • statement ')' '{' body '}'
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    CHAR   shift, and go to state 3
+    VOID   shift, and go to state 4
+    ID     shift, and go to state 51
+
+    datatype   go to state 26
+    statement  go to state 53
+
+
+State 33
+
+   14 body: IF '(' • condition ')' '{' body '}' else
+
+    TRUE       shift, and go to state 54
+    FALSE      shift, and go to state 55
+    NUMBER     shift, and go to state 56
+    FLOAT_NUM  shift, and go to state 57
+    ID         shift, and go to state 58
+    CHARACTER  shift, and go to state 59
+
+    condition  go to state 60
+    value      go to state 61
+
+
+State 34
+
+   41 relop: LT •
+
+    $default  reduce using rule 41 (relop)
+
+
+State 35
+
+   42 relop: GT •
+
+    $default  reduce using rule 42 (relop)
+
+
+State 36
+
+   43 relop: LE •
+
+    $default  reduce using rule 43 (relop)
+
+
+State 37
+
+   44 relop: GE •
+
+    $default  reduce using rule 44 (relop)
+
+
+State 38
+
+   45 relop: EQ •
+
+    $default  reduce using rule 45 (relop)
+
+
+State 39
+
+   46 relop: NE •
+
+    $default  reduce using rule 46 (relop)
+
+
+State 40
+
+   20 defined_function: ID '(' • arguments_expression ')'
+
+    NUMBER     shift, and go to state 56
+    FLOAT_NUM  shift, and go to state 57
+    ID         shift, and go to state 62
+    CHARACTER  shift, and go to state 59
+
+    arguments_expression  go to state 63
+    argument_expression   go to state 64
+    value                 go to state 65
+
+
+State 41
+
+   31 statement: ID '=' • expression
+
+    NUMBER     shift, and go to state 56
+    FLOAT_NUM  shift, and go to state 57
+    ID         shift, and go to state 58
+    CHARACTER  shift, and go to state 59
+
+    expression  go to state 66
+    value       go to state 67
+
+
+State 42
+
+   32 statement: ID relop • expression
+
+    NUMBER     shift, and go to state 56
+    FLOAT_NUM  shift, and go to state 57
+    ID         shift, and go to state 58
+    CHARACTER  shift, and go to state 59
+
+    expression  go to state 68
+    value       go to state 67
+
+
+State 43
+
+   19 predefined_function: PUTCHAR '(' • STRING ')'
+
+    STRING  shift, and go to state 69
+
+
+State 44
+
+   30 statement: datatype ID • init
+
+    '='  shift, and go to state 70
+
+    $default  reduce using rule 34 (init)
+
+    init  go to state 71
+
+
+State 45
+
+   51 return: RETURN • value ';'
+
+    NUMBER     shift, and go to state 56
+    FLOAT_NUM  shift, and go to state 57
+    ID         shift, and go to state 58
+    CHARACTER  shift, and go to state 59
+
+    value  go to state 72
+
+
+State 46
+
+   16 body: body • body
+   16     | body body •
+
+    INT      shift, and go to state 1
+    FLOAT    shift, and go to state 2
+    CHAR     shift, and go to state 3
+    VOID     shift, and go to state 4
+    FOR      shift, and go to state 21
+    WHILE    shift, and go to state 22
+    IF       shift, and go to state 23
+    ID       shift, and go to state 24
+    PUTCHAR  shift, and go to state 25
+
+    INT       [reduce using rule 16 (body)]
+    FLOAT     [reduce using rule 16 (body)]
+    CHAR      [reduce using rule 16 (body)]
+    VOID      [reduce using rule 16 (body)]
+    FOR       [reduce using rule 16 (body)]
+    WHILE     [reduce using rule 16 (body)]
+    IF        [reduce using rule 16 (body)]
+    ID        [reduce using rule 16 (body)]
+    PUTCHAR   [reduce using rule 16 (body)]
+    $default  reduce using rule 16 (body)
+
+    datatype             go to state 26
+    body                 go to state 46
+    predefined_function  go to state 28
+    defined_function     go to state 29
+    statement            go to state 30
+
+
+State 47
+
+    4 function_definition: datatype ID '(' arguments_definition ')' '{' body return • '}'
+
+    '}'  shift, and go to state 73
+
+
+State 48
+
+   17 body: predefined_function ';' •
+
+    $default  reduce using rule 17 (body)
+
+
+State 49
+
+   18 body: defined_function ';' •
+
+    $default  reduce using rule 18 (body)
+
+
+State 50
+
+   15 body: statement ';' •
+
+    $default  reduce using rule 15 (body)
+
+
+State 51
+
+   31 statement: ID • '=' expression
+   32          | ID • relop expression
+
+    LT   shift, and go to state 34
+    GT   shift, and go to state 35
+    LE   shift, and go to state 36
+    GE   shift, and go to state 37
+    EQ   shift, and go to state 38
+    NE   shift, and go to state 39
+    '='  shift, and go to state 41
+
+    relop  go to state 42
+
+
+State 52
+
+   12 body: FOR '(' statement • ';' condition ';' statement ')' '{' body '}'
+
+    ';'  shift, and go to state 74
+
+
+State 53
+
+   13 body: WHILE '(' statement • ')' '{' body '}'
+
+    ')'  shift, and go to state 75
+
+
+State 54
+
+   28 condition: TRUE •
+
+    $default  reduce using rule 28 (condition)
+
+
+State 55
+
+   29 condition: FALSE •
+
+    $default  reduce using rule 29 (condition)
+
+
+State 56
+
+   47 value: NUMBER •
+
+    $default  reduce using rule 47 (value)
+
+
+State 57
+
+   48 value: FLOAT_NUM •
+
+    $default  reduce using rule 48 (value)
+
+
+State 58
+
+   50 value: ID •
+
+    $default  reduce using rule 50 (value)
+
+
+State 59
+
+   49 value: CHARACTER •
+
+    $default  reduce using rule 49 (value)
+
+
+State 60
+
+   14 body: IF '(' condition • ')' '{' body '}' else
+
+    ')'  shift, and go to state 76
+
+
+State 61
+
+   27 condition: value • relop value
+
+    LT  shift, and go to state 34
+    GT  shift, and go to state 35
+    LE  shift, and go to state 36
+    GE  shift, and go to state 37
+    EQ  shift, and go to state 38
+    NE  shift, and go to state 39
+
+    relop  go to state 77
+
+
+State 62
+
+   23 argument_expression: ID •
+   50 value: ID •
+
+    ')'       reduce using rule 23 (argument_expression)
+    ')'       [reduce using rule 50 (value)]
+    ','       reduce using rule 23 (argument_expression)
+    ','       [reduce using rule 50 (value)]
+    $default  reduce using rule 23 (argument_expression)
+
+
+State 63
+
+   20 defined_function: ID '(' arguments_expression • ')'
+
+    ')'  shift, and go to state 78
+
+
+State 64
+
+   21 arguments_expression: argument_expression •
+   22                     | argument_expression • ',' arguments_expression
+
+    ','  shift, and go to state 79
+
+    $default  reduce using rule 21 (arguments_expression)
+
+
+State 65
+
+   24 argument_expression: value •
+
+    $default  reduce using rule 24 (argument_expression)
+
+
+State 66
+
+   31 statement: ID '=' expression •
+   35 expression: expression • arithmetic expression
+
+    ADD  shift, and go to state 80
+    SUB  shift, and go to state 81
+    DIV  shift, and go to state 82
+    MUL  shift, and go to state 83
+
+    $default  reduce using rule 31 (statement)
+
+    arithmetic  go to state 84
+
+
+State 67
+
+   36 expression: value •
+
+    $default  reduce using rule 36 (expression)
+
+
+State 68
+
+   32 statement: ID relop expression •
+   35 expression: expression • arithmetic expression
+
+    ADD  shift, and go to state 80
+    SUB  shift, and go to state 81
+    DIV  shift, and go to state 82
+    MUL  shift, and go to state 83
+
+    $default  reduce using rule 32 (statement)
+
+    arithmetic  go to state 84
+
+
+State 69
+
+   19 predefined_function: PUTCHAR '(' STRING • ')'
+
+    ')'  shift, and go to state 85
+
+
+State 70
+
+   33 init: '=' • value
+
+    NUMBER     shift, and go to state 56
+    FLOAT_NUM  shift, and go to state 57
+    ID         shift, and go to state 58
+    CHARACTER  shift, and go to state 59
+
+    value  go to state 86
+
+
+State 71
+
+   30 statement: datatype ID init •
+
+    $default  reduce using rule 30 (statement)
+
+
+State 72
+
+   51 return: RETURN value • ';'
+
+    ';'  shift, and go to state 87
+
+
+State 73
+
+    4 function_definition: datatype ID '(' arguments_definition ')' '{' body return '}' •
+
+    $default  reduce using rule 4 (function_definition)
+
+
+State 74
+
+   12 body: FOR '(' statement ';' • condition ';' statement ')' '{' body '}'
+
+    TRUE       shift, and go to state 54
+    FALSE      shift, and go to state 55
+    NUMBER     shift, and go to state 56
+    FLOAT_NUM  shift, and go to state 57
+    ID         shift, and go to state 58
+    CHARACTER  shift, and go to state 59
+
+    condition  go to state 88
+    value      go to state 61
+
+
+State 75
+
+   13 body: WHILE '(' statement ')' • '{' body '}'
+
+    '{'  shift, and go to state 89
+
+
+State 76
+
+   14 body: IF '(' condition ')' • '{' body '}' else
+
+    '{'  shift, and go to state 90
+
+
+State 77
+
+   27 condition: value relop • value
+
+    NUMBER     shift, and go to state 56
+    FLOAT_NUM  shift, and go to state 57
+    ID         shift, and go to state 58
+    CHARACTER  shift, and go to state 59
+
+    value  go to state 91
+
+
+State 78
+
+   20 defined_function: ID '(' arguments_expression ')' •
+
+    $default  reduce using rule 20 (defined_function)
+
+
+State 79
+
+   22 arguments_expression: argument_expression ',' • arguments_expression
+
+    NUMBER     shift, and go to state 56
+    FLOAT_NUM  shift, and go to state 57
+    ID         shift, and go to state 62
+    CHARACTER  shift, and go to state 59
+
+    arguments_expression  go to state 92
+    argument_expression   go to state 64
+    value                 go to state 65
+
+
+State 80
+
+   37 arithmetic: ADD •
+
+    $default  reduce using rule 37 (arithmetic)
+
+
+State 81
+
+   38 arithmetic: SUB •
+
+    $default  reduce using rule 38 (arithmetic)
+
+
+State 82
+
+   40 arithmetic: DIV •
+
+    $default  reduce using rule 40 (arithmetic)
+
+
+State 83
+
+   39 arithmetic: MUL •
+
+    $default  reduce using rule 39 (arithmetic)
+
+
+State 84
+
+   35 expression: expression arithmetic • expression
+
+    NUMBER     shift, and go to state 56
+    FLOAT_NUM  shift, and go to state 57
+    ID         shift, and go to state 58
+    CHARACTER  shift, and go to state 59
+
+    expression  go to state 93
+    value       go to state 67
+
+
+State 85
+
+   19 predefined_function: PUTCHAR '(' STRING ')' •
+
+    $default  reduce using rule 19 (predefined_function)
+
+
+State 86
+
+   33 init: '=' value •
+
+    $default  reduce using rule 33 (init)
+
+
+State 87
+
+   51 return: RETURN value ';' •
+
+    $default  reduce using rule 51 (return)
+
+
+State 88
+
+   12 body: FOR '(' statement ';' condition • ';' statement ')' '{' body '}'
+
+    ';'  shift, and go to state 94
+
+
+State 89
+
+   13 body: WHILE '(' statement ')' '{' • body '}'
+
+    INT      shift, and go to state 1
+    FLOAT    shift, and go to state 2
+    CHAR     shift, and go to state 3
+    VOID     shift, and go to state 4
+    FOR      shift, and go to state 21
+    WHILE    shift, and go to state 22
+    IF       shift, and go to state 23
+    ID       shift, and go to state 24
+    PUTCHAR  shift, and go to state 25
+
+    datatype             go to state 26
+    body                 go to state 95
+    predefined_function  go to state 28
+    defined_function     go to state 29
+    statement            go to state 30
+
+
+State 90
+
+   14 body: IF '(' condition ')' '{' • body '}' else
+
+    INT      shift, and go to state 1
+    FLOAT    shift, and go to state 2
+    CHAR     shift, and go to state 3
+    VOID     shift, and go to state 4
+    FOR      shift, and go to state 21
+    WHILE    shift, and go to state 22
+    IF       shift, and go to state 23
+    ID       shift, and go to state 24
+    PUTCHAR  shift, and go to state 25
+
+    datatype             go to state 26
+    body                 go to state 96
+    predefined_function  go to state 28
+    defined_function     go to state 29
+    statement            go to state 30
+
+
+State 91
+
+   27 condition: value relop value •
+
+    $default  reduce using rule 27 (condition)
+
+
+State 92
+
+   22 arguments_expression: argument_expression ',' arguments_expression •
+
+    $default  reduce using rule 22 (arguments_expression)
+
+
+State 93
+
+   35 expression: expression • arithmetic expression
+   35           | expression arithmetic expression •
+
+    ADD  shift, and go to state 80
+    SUB  shift, and go to state 81
+    DIV  shift, and go to state 82
+    MUL  shift, and go to state 83
+
+    ADD       [reduce using rule 35 (expression)]
+    SUB       [reduce using rule 35 (expression)]
+    DIV       [reduce using rule 35 (expression)]
+    MUL       [reduce using rule 35 (expression)]
+    $default  reduce using rule 35 (expression)
+
+    arithmetic  go to state 84
+
+
+State 94
+
+   12 body: FOR '(' statement ';' condition ';' • statement ')' '{' body '}'
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    CHAR   shift, and go to state 3
+    VOID   shift, and go to state 4
+    ID     shift, and go to state 51
+
+    datatype   go to state 26
+    statement  go to state 97
+
+
+State 95
+
+   13 body: WHILE '(' statement ')' '{' body • '}'
+   16     | body • body
+
+    INT      shift, and go to state 1
+    FLOAT    shift, and go to state 2
+    CHAR     shift, and go to state 3
+    VOID     shift, and go to state 4
+    FOR      shift, and go to state 21
+    WHILE    shift, and go to state 22
+    IF       shift, and go to state 23
+    ID       shift, and go to state 24
+    PUTCHAR  shift, and go to state 25
+    '}'      shift, and go to state 98
+
+    datatype             go to state 26
+    body                 go to state 46
+    predefined_function  go to state 28
+    defined_function     go to state 29
+    statement            go to state 30
+
+
+State 96
+
+   14 body: IF '(' condition ')' '{' body • '}' else
+   16     | body • body
+
+    INT      shift, and go to state 1
+    FLOAT    shift, and go to state 2
+    CHAR     shift, and go to state 3
+    VOID     shift, and go to state 4
+    FOR      shift, and go to state 21
+    WHILE    shift, and go to state 22
+    IF       shift, and go to state 23
+    ID       shift, and go to state 24
+    PUTCHAR  shift, and go to state 25
+    '}'      shift, and go to state 99
+
+    datatype             go to state 26
+    body                 go to state 46
+    predefined_function  go to state 28
+    defined_function     go to state 29
+    statement            go to state 30
+
+
+State 97
+
+   12 body: FOR '(' statement ';' condition ';' statement • ')' '{' body '}'
+
+    ')'  shift, and go to state 100
+
+
+State 98
+
+   13 body: WHILE '(' statement ')' '{' body '}' •
+
+    $default  reduce using rule 13 (body)
+
+
+State 99
+
+   14 body: IF '(' condition ')' '{' body '}' • else
+
+    ELSE  shift, and go to state 101
+
+    $default  reduce using rule 26 (else)
+
+    else  go to state 102
+
+
+State 100
+
+   12 body: FOR '(' statement ';' condition ';' statement ')' • '{' body '}'
+
+    '{'  shift, and go to state 103
+
+
+State 101
+
+   25 else: ELSE • '{' body '}'
+
+    '{'  shift, and go to state 104
+
+
+State 102
+
+   14 body: IF '(' condition ')' '{' body '}' else •
+
+    $default  reduce using rule 14 (body)
+
+
+State 103
+
+   12 body: FOR '(' statement ';' condition ';' statement ')' '{' • body '}'
+
+    INT      shift, and go to state 1
+    FLOAT    shift, and go to state 2
+    CHAR     shift, and go to state 3
+    VOID     shift, and go to state 4
+    FOR      shift, and go to state 21
+    WHILE    shift, and go to state 22
+    IF       shift, and go to state 23
+    ID       shift, and go to state 24
+    PUTCHAR  shift, and go to state 25
+
+    datatype             go to state 26
+    body                 go to state 105
+    predefined_function  go to state 28
+    defined_function     go to state 29
+    statement            go to state 30
+
+
+State 104
+
+   25 else: ELSE '{' • body '}'
+
+    INT      shift, and go to state 1
+    FLOAT    shift, and go to state 2
+    CHAR     shift, and go to state 3
+    VOID     shift, and go to state 4
+    FOR      shift, and go to state 21
+    WHILE    shift, and go to state 22
+    IF       shift, and go to state 23
+    ID       shift, and go to state 24
+    PUTCHAR  shift, and go to state 25
+
+    datatype             go to state 26
+    body                 go to state 106
+    predefined_function  go to state 28
+    defined_function     go to state 29
+    statement            go to state 30
+
+
+State 105
+
+   12 body: FOR '(' statement ';' condition ';' statement ')' '{' body • '}'
+   16     | body • body
+
+    INT      shift, and go to state 1
+    FLOAT    shift, and go to state 2
+    CHAR     shift, and go to state 3
+    VOID     shift, and go to state 4
+    FOR      shift, and go to state 21
+    WHILE    shift, and go to state 22
+    IF       shift, and go to state 23
+    ID       shift, and go to state 24
+    PUTCHAR  shift, and go to state 25
+    '}'      shift, and go to state 107
+
+    datatype             go to state 26
+    body                 go to state 46
+    predefined_function  go to state 28
+    defined_function     go to state 29
+    statement            go to state 30
+
+
+State 106
+
+   16 body: body • body
+   25 else: ELSE '{' body • '}'
+
+    INT      shift, and go to state 1
+    FLOAT    shift, and go to state 2
+    CHAR     shift, and go to state 3
+    VOID     shift, and go to state 4
+    FOR      shift, and go to state 21
+    WHILE    shift, and go to state 22
+    IF       shift, and go to state 23
+    ID       shift, and go to state 24
+    PUTCHAR  shift, and go to state 25
+    '}'      shift, and go to state 108
+
+    datatype             go to state 26
+    body                 go to state 46
+    predefined_function  go to state 28
+    defined_function     go to state 29
+    statement            go to state 30
+
+
+State 107
+
+   12 body: FOR '(' statement ';' condition ';' statement ')' '{' body '}' •
+
+    $default  reduce using rule 12 (body)
+
+
+State 108
+
+   25 else: ELSE '{' body '}' •
+
+    $default  reduce using rule 25 (else)

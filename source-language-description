@@ -2,15 +2,15 @@
 
 Source language of uni-compiler is in fact fragment of C language.
 
-It is an imperative, statically typed, lexically scoped and memory-unsafe language. It has simple control-flow constructs, recursion, forward declarations of functions, global variables, multi-dimensional arrays syntax, pointers and so on.
+It is an imperative, statically typed, lexically scoped and memory-unsafe language. It has simple control-flow constructs, recursion, one-dimensional arrays syntax, pointers and so on.
 
-Main function is needed when compiling project (Place where to start computation).
+Main function is needed when compiling project (Place it where to start computation).
 
 ## Types
 
 ### Basic Data Types
 
-12 basic data types: void, signed and unsigned integers (int8, int16, int32, int64, uint8, uint16, uint32, uint64), floating-point numbers (single precision float, double precision double). Integers are written in hexadecimal format. Strings are represented by array of uint8.
+4 basic data types: void, signed integer int, char, floating-point numbers float (single precision). Integers are written in hexadecimal format. Strings are represented by array of chars.
 
 ### Relational Operators
 
@@ -49,32 +49,28 @@ uint8 array_name[2][3] = {
 
 ### Pointers
 
-Same as in C we have pointer type for every type: uint8 *pointer_to_int. Name of a defined array is also pointer automatically. * operator is used for dereferencing, while & is used for getting address (which is exactly what pointer stores) of a variable. Language provides pointer aritmetics so you can traverse memory based on type of pointer.
+Same as in C we have pointer type for every type: int *pointer_to_int. Name of a defined array is also pointer automatically. * operator is used for dereferencing, while & is used for getting address (which is exactly what pointer stores) of a variable. Language provides pointer aritmetics so you can traverse memory based on type of pointer.
 
 ### Conversions
 
-Implicit conversions are happening only when there is no data loss, for example from uint8 to uint16, but that is all. Arrays cannot be implicitly converted and other conversions can do explicitly a programmer:
+Implicit conversions are happening only when there is no data loss, for example from char to int, but that is all. Arrays cannot be implicitly converted and other conversions can do explicitly a programmer:
 
-int64 first = 159;
-uint32 second = (uint32) first;
+int first = 159;
+char second = (char) first;
 
 ## Control-Flow
 
-Our language has for loops, while and do-while loops, if statements and classical function calls.
+Our language has for loops and while loops, if statements and classical function calls.
 
 ### Loops
 
 For loop:
 
-for (uint32 i = 0; i < 10; i = i + 1) { ... }
+for (int i = 0; i < 10; i = i + 1) { ... }
 
 While loop:
 
 while ([bool condition]) { ... }
-
-Do-while loop:
-
-do { ... } while ([bool condition])
 
 ### If Statements
 
@@ -86,22 +82,22 @@ if ([bool condition]) { ... } else { ... }
 
 ### Functions
 
-Our functions can or could not be declared forwardly, they need some return type and arguments and explicit return value if they are not of type void. Names can be omitted in forwar declaration. This is needed when doing mutual recursion of more than one functions.
+Our functions cannot be declared forwardly, they need some return type and arguments and explicit return value if they are not of type void. That means that mutual recursion is not possible. Which is safer and it makes code more readable.
 
-uint8 add(uint8, uint8);
+int add(int, int);
 
-uint8 add(uint8 a, uint8 b) {
+int add(int a, int b) {
 	return a + b;
 }
 
-Most important is main function which has two positional arguments: uint16 argc and uint8 * argv, when there is return statement in main, then whole program ends.
+Most important is main function which has int retunr type (1 when error, 0 when success) and zero positional arguments, when there is return statement in main, then whole program ends.
 
 ## Other implemented functions
 
-void* malloc(uint64 size); (classical memory allocation)
-void* calloc(uint64 size_of_elem, uint64 count); (allocation with zeros in memory)
-void* realloc(uint64 new_size);
+void* malloc(int size); (classical memory allocation)
+void* calloc(int size_of_elem, int count); (allocation with zeros in memory)
+void* realloc(int new_size);
 bool free(void *memory); (frees memory)
-uint8 putchar(uint8 letter);
-uint8 getchar();
+int putchar(char letter);
+int getchar();
 

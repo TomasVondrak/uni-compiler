@@ -54,34 +54,34 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    NUMBER = 258,                  /* NUMBER  */
-    FLOAT_NUM = 259,               /* FLOAT_NUM  */
-    ID = 260,                      /* ID  */
-    CHARACTER = 261,               /* CHARACTER  */
-    INT = 262,                     /* INT  */
-    FLOAT = 263,                   /* FLOAT  */
-    CHAR = 264,                    /* CHAR  */
-    VOID = 265,                    /* VOID  */
-    RETURN = 266,                  /* RETURN  */
-    FOR = 267,                     /* FOR  */
-    WHILE = 268,                   /* WHILE  */
-    IF = 269,                      /* IF  */
-    ELSE = 270,                    /* ELSE  */
-    LT = 271,                      /* LT  */
-    GT = 272,                      /* GT  */
-    LE = 273,                      /* LE  */
-    GE = 274,                      /* GE  */
-    EQ = 275,                      /* EQ  */
-    NE = 276,                      /* NE  */
-    AND = 277,                     /* AND  */
-    OR = 278,                      /* OR  */
-    ADD = 279,                     /* ADD  */
-    SUB = 280,                     /* SUB  */
-    DIV = 281,                     /* DIV  */
-    MUL = 282,                     /* MUL  */
-    TRUE = 283,                    /* TRUE  */
-    FALSE = 284,                   /* FALSE  */
-    PUTCHAR = 285                  /* PUTCHAR  */
+    INT = 258,                     /* INT  */
+    FLOAT = 259,                   /* FLOAT  */
+    CHAR = 260,                    /* CHAR  */
+    VOID = 261,                    /* VOID  */
+    RETURN = 262,                  /* RETURN  */
+    FOR = 263,                     /* FOR  */
+    WHILE = 264,                   /* WHILE  */
+    IF = 265,                      /* IF  */
+    ELSE = 266,                    /* ELSE  */
+    LT = 267,                      /* LT  */
+    GT = 268,                      /* GT  */
+    LE = 269,                      /* LE  */
+    GE = 270,                      /* GE  */
+    EQ = 271,                      /* EQ  */
+    NE = 272,                      /* NE  */
+    AND = 273,                     /* AND  */
+    OR = 274,                      /* OR  */
+    ADD = 275,                     /* ADD  */
+    SUB = 276,                     /* SUB  */
+    DIV = 277,                     /* DIV  */
+    MUL = 278,                     /* MUL  */
+    TRUE = 279,                    /* TRUE  */
+    FALSE = 280,                   /* FALSE  */
+    PUTCHAR = 281,                 /* PUTCHAR  */
+    NUMBER = 282,                  /* NUMBER  */
+    FLOAT_NUM = 283,               /* FLOAT_NUM  */
+    ID = 284,                      /* ID  */
+    CHARACTER = 285                /* CHARACTER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -90,45 +90,45 @@ extern int yydebug;
 #define YYEOF 0
 #define YYerror 256
 #define YYUNDEF 257
-#define NUMBER 258
-#define FLOAT_NUM 259
-#define ID 260
-#define CHARACTER 261
-#define INT 262
-#define FLOAT 263
-#define CHAR 264
-#define VOID 265
-#define RETURN 266
-#define FOR 267
-#define WHILE 268
-#define IF 269
-#define ELSE 270
-#define LT 271
-#define GT 272
-#define LE 273
-#define GE 274
-#define EQ 275
-#define NE 276
-#define AND 277
-#define OR 278
-#define ADD 279
-#define SUB 280
-#define DIV 281
-#define MUL 282
-#define TRUE 283
-#define FALSE 284
-#define PUTCHAR 285
+#define INT 258
+#define FLOAT 259
+#define CHAR 260
+#define VOID 261
+#define RETURN 262
+#define FOR 263
+#define WHILE 264
+#define IF 265
+#define ELSE 266
+#define LT 267
+#define GT 268
+#define LE 269
+#define GE 270
+#define EQ 271
+#define NE 272
+#define AND 273
+#define OR 274
+#define ADD 275
+#define SUB 276
+#define DIV 277
+#define MUL 278
+#define TRUE 279
+#define FALSE 280
+#define PUTCHAR 281
+#define NUMBER 282
+#define FLOAT_NUM 283
+#define ID 284
+#define CHARACTER 285
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 44 "parser.y"
+#line 61 "parser.y"
 
-    int number;
-    float float_num;
-    char *string;
-    char character;
+    struct var_name {
+        char name[100];
+        struct node *nd;
+    } nd_obj;
 
 #line 134 "y.tab.h"
 

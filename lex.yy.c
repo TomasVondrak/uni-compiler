@@ -822,137 +822,137 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 14 "lexer.l"
-{ return PUTCHAR; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return PUTCHAR; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 16 "lexer.l"
-{ return INT; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return INT; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 17 "lexer.l"
-{ return FLOAT; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return FLOAT; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 18 "lexer.l"
-{ return CHAR; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return CHAR; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 19 "lexer.l"
-{ return VOID; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return VOID; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 21 "lexer.l"
-{ return RETURN; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return RETURN; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 22 "lexer.l"
-{ return FOR; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return FOR; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 23 "lexer.l"
-{ return WHILE; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return WHILE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 24 "lexer.l"
-{ return IF; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return IF; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 25 "lexer.l"
-{ return ELSE; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return ELSE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 27 "lexer.l"
-{ return LT; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return LT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 28 "lexer.l"
-{ return GT; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return GT; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 29 "lexer.l"
-{ return LE; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return LE; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 30 "lexer.l"
-{ return GE; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return GE; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 31 "lexer.l"
-{ return EQ; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return EQ; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 32 "lexer.l"
-{ return NE; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return NE; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 33 "lexer.l"
-{ return AND; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return AND; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 34 "lexer.l"
-{ return OR; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return OR; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 35 "lexer.l"
-{ return ADD; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return ADD; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 36 "lexer.l"
-{ return SUB; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return SUB; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 37 "lexer.l"
-{ return DIV; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return DIV; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 38 "lexer.l"
-{ return MUL; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return MUL; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 40 "lexer.l"
-{ return TRUE; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return TRUE; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 41 "lexer.l"
-{ return FALSE; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return FALSE; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 43 "lexer.l"
-{ yylval.number = atoi(yytext); return NUMBER; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return NUMBER; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 44 "lexer.l"
-{ yylval.float_num = atof(yytext); return FLOAT_NUM; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return FLOAT_NUM; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 45 "lexer.l"
-{ yylval.string = strdup(yytext); return ID; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return ID; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
@@ -984,7 +984,7 @@ YY_RULE_SETUP
 case 33:
 YY_RULE_SETUP
 #line 53 "lexer.l"
-{ yylval.character = *yytext; return CHARACTER; }
+{ strcpy(yylval.nd_obj.name,(yytext)); return CHARACTER; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP

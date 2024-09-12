@@ -4,6 +4,10 @@ void ahoj(int number, char character) {
 	}
 }
 
+void papa() {
+	return;
+}
+
 int main() {
 	for (int i = 0; i < 20; i = i + 1) {
 		ahoj(i, 'a');

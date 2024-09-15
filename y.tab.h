@@ -123,14 +123,21 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 61 "parser.y"
+#line 84 "parser.y"
 
     struct var_name {
         char name[100];
         struct node *nd;
     } nd_obj;
 
-#line 134 "y.tab.h"
+    struct var_name2 {
+        char name[100];
+        struct node* nd;
+        char datatype[20];
+        char type[20];
+    } nd_obj2;
+
+#line 141 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

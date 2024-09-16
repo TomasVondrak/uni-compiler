@@ -5,6 +5,7 @@ void ahoj(int number, char character) {
 		putchar('b');
 	}
 	putchar('c');
+	return;
 }
 
 int main() {

@@ -793,7 +793,7 @@ static const yytype_int16 yyrline[] =
        0,   136,   136,   143,   146,   152,   158,   158,   166,   174,
      166,   185,   188,   194,   197,   197,   203,   215,   220,   224,
      229,   236,   242,   245,   251,   251,   260,   260,   271,   275,
-     277,   271,   286,   289,   295,   295,   299,   305,   322,   325,
+     277,   271,   287,   290,   296,   296,   300,   306,   322,   325,
      331,   331,   341,   341,   348,   348,   355,   363,   367,   367,
      375,   375,   392,   398,   407,   417,   426,   435,   438,   441,
      444,   450,   454,   458,   462,   466,   470,   477,   486,   495,
@@ -1677,7 +1677,7 @@ yyreduce:
         struct node *temp2 = mknode((yyvsp[-6].nd_obj).nd, temp, "CONDITION");
         (yyval.nd_obj).nd = mknode(temp2, (yyvsp[0].nd_obj).nd, (yyvsp[-9].nd_obj).name);
         sprintf(icg[ic_idx++], "\t%s", buff); // TODO k čemu je buff? nic nedělá ne?
-        sprintf(icg[ic_idx++], "JUMP to %%%s\n", (yyvsp[-4].nd_obj3).if_body);
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", (yyvsp[-4].nd_obj3).if_body);
         sprintf(icg[ic_idx++], "\n%s:\n", (yyvsp[-4].nd_obj3).else_body);
         end_of_scope();
       }
@@ -1699,7 +1699,7 @@ yyreduce:
                                              {
         (yyval.nd_obj).nd = mknode((yyvsp[-2].nd_obj3).nd, (yyvsp[0].nd_obj).nd, (yyvsp[-5].nd_obj).name);
         sprintf(icg[ic_idx++], "\t%s", buff);
-        sprintf(icg[ic_idx++], "\tJUMP to %%%s\n", (yyvsp[-2].nd_obj3).if_body);
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", (yyvsp[-2].nd_obj3).if_body);
         sprintf(icg[ic_idx++], "\n%s:\n", (yyvsp[-2].nd_obj3).else_body);
         end_of_scope();
       }
@@ -1727,7 +1727,7 @@ yyreduce:
   case 30: /* $@9: %empty  */
 #line 277 "parser.y"
                            {
-        sprintf(icg[ic_idx++], "\tGOTO %%%s\n", (yyvsp[-3].nd_obj3).next_body);
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", (yyvsp[-3].nd_obj3).next_body);
         sprintf(icg[ic_idx++], "\n%s:\n", (yyvsp[-3].nd_obj3).else_body);
       }
 #line 1734 "y.tab.c"
@@ -1738,53 +1738,54 @@ yyreduce:
              {
         struct node *iff = mknode((yyvsp[-5].nd_obj3).nd, (yyvsp[-2].nd_obj).nd, (yyvsp[-8].nd_obj).name);
         (yyval.nd_obj).nd = mknode(iff, (yyvsp[0].nd_obj).nd, "if-else");
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", (yyvsp[-5].nd_obj3).next_body);
         sprintf(icg[ic_idx++], "\n%s:\n", (yyvsp[-5].nd_obj3).next_body);
         end_of_scope();
       }
-#line 1745 "y.tab.c"
+#line 1746 "y.tab.c"
     break;
 
   case 32: /* item: statement ';'  */
-#line 286 "parser.y"
+#line 287 "parser.y"
                     {
         (yyval.nd_obj).nd = (yyvsp[-1].nd_obj).nd;
     }
-#line 1753 "y.tab.c"
+#line 1754 "y.tab.c"
     break;
 
   case 33: /* item: return  */
-#line 289 "parser.y"
+#line 290 "parser.y"
              {
         (yyval.nd_obj).nd = (yyvsp[0].nd_obj).nd;
       }
-#line 1761 "y.tab.c"
+#line 1762 "y.tab.c"
     break;
 
   case 34: /* $@10: %empty  */
-#line 295 "parser.y"
+#line 296 "parser.y"
            { add_to_table('K', (yyvsp[0].nd_obj).name); new_scope(); }
-#line 1767 "y.tab.c"
+#line 1768 "y.tab.c"
     break;
 
   case 35: /* else: ELSE $@10 compound_statement  */
-#line 295 "parser.y"
+#line 296 "parser.y"
                                                                            {
         (yyval.nd_obj).nd = mknode((yyvsp[0].nd_obj).nd, NULL, (yyvsp[-2].nd_obj).name);
         end_of_scope();
       }
-#line 1776 "y.tab.c"
+#line 1777 "y.tab.c"
     break;
 
   case 36: /* else: %empty  */
-#line 299 "parser.y"
+#line 300 "parser.y"
       {
         (yyval.nd_obj).nd = NULL;
       }
-#line 1784 "y.tab.c"
+#line 1785 "y.tab.c"
     break;
 
   case 37: /* condition: expression relop expression  */
-#line 305 "parser.y"
+#line 306 "parser.y"
                                   { // TODO: dodělat kontrolu a and, or
         (yyval.nd_obj3).nd = mknode((yyvsp[-2].nd_obj2).nd, (yyvsp[0].nd_obj2).nd, (yyvsp[-1].nd_obj).name);
         if (is_for) {
@@ -1796,7 +1797,6 @@ yyreduce:
             sprintf(icg[ic_idx++], "\t%%t%d = icmp %s %s %s, %s\n", temp_var, (yyvsp[-1].nd_obj).name, (yyvsp[-2].nd_obj2).datatype, (yyvsp[-2].nd_obj2).name, (yyvsp[0].nd_obj2).name);
             sprintf(icg[ic_idx++], "\tbr i1 %%t%d, label %%L%d, label %%L%d\n", temp_var, label, label + 1);
             temp_var++;
-            //sprintf(icg[ic_idx++], "\tif (%s %s %s) GOTO L%d else GOTO L%d\n", $1.name, $2.name, $3.name, label, label+1);
             sprintf((yyval.nd_obj3).if_body, "L%d", label++);
             sprintf((yyval.nd_obj3).else_body, "L%d", label++);
             sprintf((yyval.nd_obj3).next_body, "L%d", label++);
@@ -1837,7 +1837,7 @@ yyreduce:
             sem_warnings++;
         }
         (yyval.nd_obj).nd = handle_type_cast(type_exception, (yyvsp[-3].nd_obj).nd, (yyvsp[0].nd_obj2).nd, "definition");
-        sprintf(icg[ic_idx++], "\t%s %%%s = %s\n", (yyvsp[-3].nd_obj).name, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj2).name);
+        sprintf(icg[ic_idx++], "\t%%%s = %s\n", (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj2).name);
       }
 #line 1843 "y.tab.c"
     break;
@@ -1855,7 +1855,7 @@ yyreduce:
         struct node *id = mknode(NULL, NULL, (yyvsp[-2].nd_obj).name);
         struct node *pointer = mknode((yyvsp[-4].nd_obj).nd, id, "pointer_name");
         (yyval.nd_obj).nd = mknode(pointer, (yyvsp[0].nd_obj2).nd, "pointer_definition");
-        sprintf(icg[ic_idx++], "\t%s *%%%s = %s\n", (yyvsp[-4].nd_obj).name, (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj2).name);
+        sprintf(icg[ic_idx++], "\t*%%%s = %s\n", (yyvsp[-2].nd_obj).name, (yyvsp[0].nd_obj2).name);
       }
 #line 1861 "y.tab.c"
     break;
@@ -1914,7 +1914,7 @@ yyreduce:
             sem_errors++;
         }
         (yyval.nd_obj).nd = mknode((yyvsp[-1].nd_obj4).nd, NULL, (yyvsp[-4].nd_obj).name);
-        sprintf(icg[ic_idx++], "\t%s %s\n", (yyvsp[-4].nd_obj).name, (yyvsp[-1].nd_obj4).icg_result);
+        sprintf(icg[ic_idx++], "\tcall i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.special_printf_format_str, i32 0), i32 0, i8 %s)\n", (yyvsp[-1].nd_obj4).icg_result);
       }
 #line 1920 "y.tab.c"
     break;
@@ -1939,7 +1939,7 @@ yyreduce:
         struct node *id = mknode(NULL, NULL, (yyvsp[-4].nd_obj).name);
         struct node *pointer = mknode((yyvsp[-5].nd_obj).nd, id, "pointer_name");
         (yyval.nd_obj).nd = mknode(pointer, (yyvsp[-1].nd_obj4).nd, "array");
-        sprintf(icg[ic_idx++], "\t%s %%%s [%s]\n", (yyvsp[-5].nd_obj).name, (yyvsp[-4].nd_obj).name, (yyvsp[-1].nd_obj4).icg_result);
+        sprintf(icg[ic_idx++], "\t%%%s [%s]\n", (yyvsp[-4].nd_obj).name, (yyvsp[-1].nd_obj4).icg_result);
       }
 #line 1945 "y.tab.c"
     break;
@@ -2127,7 +2127,7 @@ yyreduce:
         add_to_table('C', (yyvsp[0].nd_obj).name);
         (yyval.nd_obj4).nd = mknode(NULL, NULL, (yyvsp[0].nd_obj).name);
         strcpy((yyval.nd_obj4).name, (yyvsp[0].nd_obj).name);
-        strcpy((yyval.nd_obj4).icg_result, (yyvsp[0].nd_obj).name);
+        sprintf((yyval.nd_obj4).icg_result, "%d", (int) (yyvsp[0].nd_obj).name[1]);
         strcpy((yyval.nd_obj4).type, "Constant");
         strcpy((yyval.nd_obj4).datatype, "i8");
       }
@@ -2275,7 +2275,7 @@ yyreduce:
 #line 588 "parser.y"
                                                   {
         (yyval.nd_obj).nd = mknode(NULL, NULL, "RETURN");
-        sprintf(icg[ic_idx++], "\tret\n");
+        sprintf(icg[ic_idx++], "\tret void\n");
       }
 #line 2281 "y.tab.c"
     break;
@@ -2763,6 +2763,8 @@ void free_tree(struct node *tree) {
 }
 
 int main() {
+    sprintf(icg[ic_idx++], "declare i32 @printf(i8*, ...)\n");
+    sprintf(icg[ic_idx++], "@.special_printf_format_str = constant [4 x i8] c\"%%c\\0A\\00\"\n");
     yyparse();
     printf("\n\t\t\t\t\t\t\t\t PHASE 1: LEXICAL ANALYSIS \n\n");
     print_symbol_table();

@@ -253,7 +253,7 @@ item
         struct node *temp2 = mknode($4.nd, temp, "CONDITION");
         $$.nd = mknode(temp2, $10.nd, $1.name);
         sprintf(icg[ic_idx++], "\t%s", buff); // TODO k čemu je buff? nic nedělá ne?
-        sprintf(icg[ic_idx++], "JUMP to %%%s\n", $6.if_body);
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", $6.if_body);
         sprintf(icg[ic_idx++], "\n%s:\n", $6.else_body);
         end_of_scope();
       }
@@ -264,7 +264,7 @@ item
       } '(' condition ')' compound_statement {
         $$.nd = mknode($4.nd, $6.nd, $1.name);
         sprintf(icg[ic_idx++], "\t%s", buff);
-        sprintf(icg[ic_idx++], "\tJUMP to %%%s\n", $4.if_body);
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", $4.if_body);
         sprintf(icg[ic_idx++], "\n%s:\n", $4.else_body);
         end_of_scope();
       }
@@ -275,11 +275,12 @@ item
       } '(' condition ')' {
         sprintf(icg[ic_idx++], "\n%s:\n", $4.if_body);
       } compound_statement {
-        sprintf(icg[ic_idx++], "\tGOTO %%%s\n", $4.next_body);
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", $4.next_body);
         sprintf(icg[ic_idx++], "\n%s:\n", $4.else_body);
       } else {
         struct node *iff = mknode($4.nd, $7.nd, $1.name);
         $$.nd = mknode(iff, $9.nd, "if-else");
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", $4.next_body);
         sprintf(icg[ic_idx++], "\n%s:\n", $4.next_body);
         end_of_scope();
       }
@@ -313,7 +314,6 @@ condition
             sprintf(icg[ic_idx++], "\t%%t%d = icmp %s %s %s, %s\n", temp_var, $2.name, $1.datatype, $1.name, $3.name);
             sprintf(icg[ic_idx++], "\tbr i1 %%t%d, label %%L%d, label %%L%d\n", temp_var, label, label + 1);
             temp_var++;
-            //sprintf(icg[ic_idx++], "\tif (%s %s %s) GOTO L%d else GOTO L%d\n", $1.name, $2.name, $3.name, label, label+1);
             sprintf($$.if_body, "L%d", label++);
             sprintf($$.else_body, "L%d", label++);
             sprintf($$.next_body, "L%d", label++);
@@ -336,14 +336,14 @@ statement
             sem_warnings++;
         }
         $$.nd = handle_type_cast(type_exception, $1.nd, $4.nd, "definition");
-        sprintf(icg[ic_idx++], "\t%s %%%s = %s\n", $1.name, $2.name, $4.name);
+        sprintf(icg[ic_idx++], "\t%%%s = %s\n", $2.name, $4.name);
       }
     | datatype MUL ID { add_to_table('P', $3.name); } init {
         check_pointer_types($1.name, $5.datatype, $5.type);
         struct node *id = mknode(NULL, NULL, $3.name);
         struct node *pointer = mknode($1.nd, id, "pointer_name");
         $$.nd = mknode(pointer, $5.nd, "pointer_definition");
-        sprintf(icg[ic_idx++], "\t%s *%%%s = %s\n", $1.name, $3.name, $5.name);
+        sprintf(icg[ic_idx++], "\t*%%%s = %s\n", $3.name, $5.name);
       }
     | ID { check_declaration($1.name); } '=' expression {
         $1.nd = mknode(NULL, NULL, $1.name);
@@ -370,7 +370,7 @@ statement
             sem_errors++;
         }
         $$.nd = mknode($4.nd, NULL, $1.name);
-        sprintf(icg[ic_idx++], "\t%s %s\n", $1.name, $4.icg_result);
+        sprintf(icg[ic_idx++], "\tcall i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.special_printf_format_str, i32 0), i32 0, i8 %s)\n", $4.icg_result);
       }
     | datatype ID { add_to_table('P', $2.name); } '[' value ']' {
         if (strcmp($5.datatype, "i32")) {
@@ -384,7 +384,7 @@ statement
         struct node *id = mknode(NULL, NULL, $2.name);
         struct node *pointer = mknode($1.nd, id, "pointer_name");
         $$.nd = mknode(pointer, $5.nd, "array");
-        sprintf(icg[ic_idx++], "\t%s %%%s [%s]\n", $1.name, $2.name, $5.icg_result);
+        sprintf(icg[ic_idx++], "\t%%%s [%s]\n", $2.name, $5.icg_result);
       }
     ;
 
@@ -497,7 +497,7 @@ value
         add_to_table('C', $1.name);
         $$.nd = mknode(NULL, NULL, $1.name);
         strcpy($$.name, $1.name);
-        strcpy($$.icg_result, $1.name);
+        sprintf($$.icg_result, "%d", (int) $1.name[1]);
         strcpy($$.type, "Constant");
         strcpy($$.datatype, "i8");
       }
@@ -587,7 +587,7 @@ return
       }
     | RETURN { add_to_table('K', "return"); } ';' {
         $$.nd = mknode(NULL, NULL, "RETURN");
-        sprintf(icg[ic_idx++], "\tret\n");
+        sprintf(icg[ic_idx++], "\tret void\n");
       }
     ;
 
@@ -879,6 +879,8 @@ void free_tree(struct node *tree) {
 }
 
 int main() {
+    sprintf(icg[ic_idx++], "declare i32 @printf(i8*, ...)\n");
+    sprintf(icg[ic_idx++], "@.special_printf_format_str = constant [4 x i8] c\"%%c\\0A\\00\"\n");
     yyparse();
     printf("\n\t\t\t\t\t\t\t\t PHASE 1: LEXICAL ANALYSIS \n\n");
     print_symbol_table();

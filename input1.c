@@ -1,7 +1,10 @@
 void ahoj(int number, char character) {
 	if (number < 10) {
 		putchar('a');
+	} else {
+		putchar('b');
 	}
+	putchar('c');
 }
 
 int main() {

@@ -21,25 +21,31 @@ L2:
 
 define i32 @main() nounwind uwtable {
 entry:
-	%a = NULL
-	%pole [10]
-	%var1 = NULL
-	%i = 0
+	%a = alloca i32
+	%pole = alloca [10 x i32]
+	%var1 = alloca i32
+	%i = alloca i32
+	store i32 0, i32* %i
 
 L3:
 	if NOT (%i slt 20) GOTO %L4
 	t1 = %i + 1
-	%i = t1
+	store i32 t1, i32* %i
 	call void @ahoj(%i, 97)
-		br label %L3
+	br label %L3
 
 L4:
-	%var = %pole
-	%var2 = %var1.addr
+	%var = alloca i32
+	store i32 %pole, i32* %var
+	%var2 = alloca i32
+	store i32 %var1.addr, i32* %var2
+	%var2 = alloca i32
 	var1 = 0 - %var1
-	%var2 = %var1
-	%var2 = *%var1
-	*%var = 2
-	*%var3 = %var2.addr
+	store i32 %var1, i32* %var2
+	%var2 = alloca i32
+	store i32 *%var1, i32* %var2
+	store i32 2, i32** %%var
+	%var3 = alloca i32*
+	store i32 %var2.addr, i32* %var3
 	ret 0
 }

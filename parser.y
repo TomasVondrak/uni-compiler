@@ -78,7 +78,7 @@
     int temp_var = 0;
     int label = 0;
     int is_for = 0;
-    char buff[100];
+    // char buff[100];
 
     void print_line_to_icg(const char *);
     void print_str_to_icg(const char *);
@@ -252,7 +252,7 @@ item
         struct node *temp = mknode($6.nd, $8.nd, "CONDITION");
         struct node *temp2 = mknode($4.nd, temp, "CONDITION");
         $$.nd = mknode(temp2, $10.nd, $1.name);
-        sprintf(icg[ic_idx++], "\t%s", buff); // TODO k čemu je buff? nic nedělá ne?
+        // sprintf(icg[ic_idx++], "\t%s", buff); // TODO k čemu je buff? nic nedělá ne?
         sprintf(icg[ic_idx++], "\tbr label %%%s\n", $6.if_body);
         sprintf(icg[ic_idx++], "\n%s:\n", $6.else_body);
         end_of_scope();
@@ -263,7 +263,7 @@ item
         is_for = 1;
       } '(' condition ')' compound_statement {
         $$.nd = mknode($4.nd, $6.nd, $1.name);
-        sprintf(icg[ic_idx++], "\t%s", buff);
+        // sprintf(icg[ic_idx++], "\t%s", buff);
         sprintf(icg[ic_idx++], "\tbr label %%%s\n", $4.if_body);
         sprintf(icg[ic_idx++], "\n%s:\n", $4.else_body);
         end_of_scope();
@@ -328,7 +328,10 @@ condition
     ;
 
 statement
-    : datatype ID { add_to_table('V', $2.name); } init {
+    : datatype ID {
+        add_to_table('V', $2.name);
+        sprintf(icg[ic_idx++], "\t%%%s = alloca %s\n", $2.name, $1.name);
+      } init {
         $2.nd = mknode(NULL, NULL, $2.name);
         int type_exception = check_types($1.name, $4.datatype);
         if (!strcmp($4.type, "Pointer")) {
@@ -336,21 +339,28 @@ statement
             sem_warnings++;
         }
         $$.nd = handle_type_cast(type_exception, $1.nd, $4.nd, "definition");
-        sprintf(icg[ic_idx++], "\t%%%s = %s\n", $2.name, $4.name);
+        if (strcmp($4.name, "NULL")) {
+            sprintf(icg[ic_idx++], "\tstore %s %s, %s* %%%s\n", $4.datatype, $4.name, $1.name, $2.name);
+        }
       }
-    | datatype MUL ID { add_to_table('P', $3.name); } init {
+    | datatype MUL ID {
+        add_to_table('P', $3.name);
+        sprintf(icg[ic_idx++], "\t%%%s = alloca %s*\n", $3.name, $1.name);
+      } init {
         check_pointer_types($1.name, $5.datatype, $5.type);
         struct node *id = mknode(NULL, NULL, $3.name);
         struct node *pointer = mknode($1.nd, id, "pointer_name");
         $$.nd = mknode(pointer, $5.nd, "pointer_definition");
-        sprintf(icg[ic_idx++], "\t*%%%s = %s\n", $3.name, $5.name);
+        if (strcmp($5.name, "NULL")) {
+            sprintf(icg[ic_idx++], "\tstore %s %s, %s* %%%s\n", $5.datatype, $5.name, $1.name, $3.name);
+        }
       }
     | ID { check_declaration($1.name); } '=' expression {
         $1.nd = mknode(NULL, NULL, $1.name);
         const char *id_datatype = get_datatype($1.name);
         int type_exception = check_types(id_datatype, $4.datatype);
         $$.nd = handle_type_cast(type_exception, $1.nd, $4.nd, "assignement");
-        sprintf(icg[ic_idx++], "\t%%%s = %s\n", $1.name, $4.name);
+        sprintf(icg[ic_idx++], "\tstore %s %s, %s* %%%s\n", $4.datatype, $4.name, get_datatype($1.name), $1.name);
       }
     | MUL '(' expression ')' '=' expression {
         if (strcmp($3.type, "Pointer") || strcmp($3.datatype, $6.datatype)) {
@@ -358,7 +368,7 @@ statement
             sem_warnings++;
         }
         $$.nd = mknode($3.nd, $6.nd, "dereference_assignement");
-        sprintf(icg[ic_idx++], "\t*%s = %s\n", $3.name, $6.name);
+        sprintf(icg[ic_idx++], "\tstore %s %s, %s** %%%s\n", $6.datatype, $6.name, $3.datatype, $3.name);
       }
     | expression {
         $$.nd = $1.nd;
@@ -384,7 +394,8 @@ statement
         struct node *id = mknode(NULL, NULL, $2.name);
         struct node *pointer = mknode($1.nd, id, "pointer_name");
         $$.nd = mknode(pointer, $5.nd, "array");
-        sprintf(icg[ic_idx++], "\t%%%s [%s]\n", $2.name, $5.icg_result);
+        // sprintf(icg[ic_idx++], "\t%%%s [%s]\n", $2.name, $5.icg_result);
+        sprintf(icg[ic_idx++], "\t%%%s = alloca [%s x %s]\n", $2.name, $5.name, $1.name);
       }
     ;
 
@@ -473,7 +484,7 @@ relop
       }
     ;
 
-value
+value // TODO in llvm everything is pointer i guess, so everything must be dereferenced when used
     : NUMBER {
         insert_datatype("i32");
         add_to_table('C', $1.name);

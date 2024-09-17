@@ -2,6 +2,7 @@ void ahoj(int number, char character) {
 	if (number < 10) {
 		return;
 	}
+	// return; // pokud dam tohle, tak funguje -> musi končit return
 }
 
 void papa() {

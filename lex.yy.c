@@ -912,22 +912,22 @@ YY_RULE_SETUP
 case 19:
 YY_RULE_SETUP
 #line 35 "lexer.l"
-{ strcpy(yylval.nd_obj.name,(yytext)); return ADD; }
+{ strcpy(yylval.nd_obj.name,("add")); return ADD; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 36 "lexer.l"
-{ strcpy(yylval.nd_obj.name,(yytext)); return SUB; }
+{ strcpy(yylval.nd_obj.name,("sub")); return SUB; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 37 "lexer.l"
-{ strcpy(yylval.nd_obj.name,(yytext)); return DIV; }
+{ strcpy(yylval.nd_obj.name,("udiv")); return DIV; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 38 "lexer.l"
-{ strcpy(yylval.nd_obj.name,(yytext)); return MUL; }
+{ strcpy(yylval.nd_obj.name,("mul")); return MUL; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP

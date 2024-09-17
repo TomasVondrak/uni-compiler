@@ -32,10 +32,10 @@ digit [0-9]
 "!="                                { strcpy(yylval.nd_obj.name,(yytext)); return NE; }
 "&&"                                { strcpy(yylval.nd_obj.name,(yytext)); return AND; }
 "||"                                { strcpy(yylval.nd_obj.name,(yytext)); return OR; }
-"+"                                 { strcpy(yylval.nd_obj.name,(yytext)); return ADD; }
-"-"                                 { strcpy(yylval.nd_obj.name,(yytext)); return SUB; }
-"/"                                 { strcpy(yylval.nd_obj.name,(yytext)); return DIV; }
-"*"                                 { strcpy(yylval.nd_obj.name,(yytext)); return MUL; }
+"+"                                 { strcpy(yylval.nd_obj.name,("add")); return ADD; }
+"-"                                 { strcpy(yylval.nd_obj.name,("sub")); return SUB; }
+"/"                                 { strcpy(yylval.nd_obj.name,("udiv")); return DIV; }
+"*"                                 { strcpy(yylval.nd_obj.name,("mul")); return MUL; }
 
 "true"                              { strcpy(yylval.nd_obj.name,(yytext)); return TRUE; }
 "false"                             { strcpy(yylval.nd_obj.name,(yytext)); return FALSE; }

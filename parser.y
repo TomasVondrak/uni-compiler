@@ -85,6 +85,7 @@
     void new_line_to_icg();
     const char *datatype_to_icg(const char *);
     const char *pointer_to_icg_name_datatype(const char *);
+    char *load_from_pointer(const char *, const char *, const char *);
 
 %}
 
@@ -205,7 +206,7 @@ argument_definition
         print_str_to_icg(pointer_to_icg_name_datatype($2.name));
         print_str_to_icg(" %");
         print_str_to_icg($2.name);
-        add_to_table('V', $2.name);
+        add_to_table('A', $2.name);
         $2.nd = mknode(NULL, NULL, $2.name);
         $$.nd = mknode($1.nd, $2.nd, "argument_definition");
       }
@@ -248,24 +249,32 @@ block
     ;
 
 item
-    : FOR { add_to_table('K', $1.name); new_scope(); is_for = 1; } '(' statement ';' condition ';' statement ')' compound_statement {
-        struct node *temp = mknode($6.nd, $8.nd, "CONDITION");
+    : FOR {
+        add_to_table('K', $1.name);
+        new_scope();
+        is_for = 1;
+      } '(' statement ';' condition ';' {
+        sprintf(icg[ic_idx++], "\n%s:\n", $6.if_body);
+      } statement ')' compound_statement {
+        struct node *temp = mknode($6.nd, $9.nd, "CONDITION");
         struct node *temp2 = mknode($4.nd, temp, "CONDITION");
-        $$.nd = mknode(temp2, $10.nd, $1.name);
+        $$.nd = mknode(temp2, $11.nd, $1.name);
         // sprintf(icg[ic_idx++], "\t%s", buff); // TODO k čemu je buff? nic nedělá ne?
-        sprintf(icg[ic_idx++], "\tbr label %%%s\n", $6.if_body);
-        sprintf(icg[ic_idx++], "\n%s:\n", $6.else_body);
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", $6.else_body);
+        sprintf(icg[ic_idx++], "\n%s:\n", $6.next_body);
         end_of_scope();
       }
     | WHILE {
         add_to_table('K', $1.name);
         new_scope();
         is_for = 1;
-      } '(' condition ')' compound_statement {
-        $$.nd = mknode($4.nd, $6.nd, $1.name);
+      } '(' condition ')' {
+        sprintf(icg[ic_idx++], "\n%s:\n", $4.if_body);
+      } compound_statement {
+        $$.nd = mknode($4.nd, $7.nd, $1.name);
         // sprintf(icg[ic_idx++], "\t%s", buff);
-        sprintf(icg[ic_idx++], "\tbr label %%%s\n", $4.if_body);
-        sprintf(icg[ic_idx++], "\n%s:\n", $4.else_body);
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", $4.else_body);
+        sprintf(icg[ic_idx++], "\n%s:\n", $4.next_body);
         end_of_scope();
       }
     | IF {
@@ -305,19 +314,32 @@ else
 condition
     : expression relop expression { // TODO: dodělat kontrolu a and, or
         $$.nd = mknode($1.nd, $3.nd, $2.name);
+        char *loaded_var_1;
+        char *loaded_var_2;
         if (is_for) {
-            sprintf($$.if_body, "L%d", label++);
-            sprintf(icg[ic_idx++], "\n%s:\n", $$.if_body);
-            sprintf(icg[ic_idx++], "\tif NOT (%s %s %s) GOTO %%L%d\n", $1.name, $2.name, $3.name, label);
             sprintf($$.else_body, "L%d", label++);
+            sprintf(icg[ic_idx++], "\tbr label %%%s\n", $$.else_body);
+            sprintf(icg[ic_idx++], "\n%s:\n", $$.else_body);
+            sprintf($$.if_body, "L%d", label);
+            loaded_var_1 = load_from_pointer($1.name, $1.type, $1.datatype);
+            loaded_var_2 = load_from_pointer($3.name, $3.type, $3.datatype);
+            sprintf(icg[ic_idx++], "\t%%t%d = icmp %s %s %s, %s\n", temp_var, $2.name, $1.datatype, loaded_var_1, loaded_var_2);
+            sprintf(icg[ic_idx++], "\tbr i1 %%t%d, label %%L%d, label %%L%d\n", temp_var, label, label + 1);
+            temp_var++;
+            label++;
+            sprintf($$.next_body, "L%d", label++);
         } else {
-            sprintf(icg[ic_idx++], "\t%%t%d = icmp %s %s %s, %s\n", temp_var, $2.name, $1.datatype, $1.name, $3.name);
+            loaded_var_1 = load_from_pointer($1.name, $1.type, $1.datatype);
+            loaded_var_2 = load_from_pointer($3.name, $3.type, $3.datatype);
+            sprintf(icg[ic_idx++], "\t%%t%d = icmp %s %s %s, %s\n", temp_var, $2.name, $1.datatype, loaded_var_1, loaded_var_2);
             sprintf(icg[ic_idx++], "\tbr i1 %%t%d, label %%L%d, label %%L%d\n", temp_var, label, label + 1);
             temp_var++;
             sprintf($$.if_body, "L%d", label++);
             sprintf($$.else_body, "L%d", label++);
             sprintf($$.next_body, "L%d", label++);
         }
+        free(loaded_var_1);
+        free(loaded_var_2);
       }
     | TRUE { add_to_table('K', $1.name);
         $$.nd = mknode(NULL, NULL, $1.name);
@@ -368,7 +390,7 @@ statement
             sem_warnings++;
         }
         $$.nd = mknode($3.nd, $6.nd, "dereference_assignement");
-        sprintf(icg[ic_idx++], "\tstore %s %s, %s** %%%s\n", $6.datatype, $6.name, $3.datatype, $3.name);
+        sprintf(icg[ic_idx++], "\tstore %s %s, %s** %s\n", $6.datatype, $6.name, $3.datatype, $3.name);
       }
     | expression {
         $$.nd = $1.nd;
@@ -380,7 +402,9 @@ statement
             sem_errors++;
         }
         $$.nd = mknode($4.nd, NULL, $1.name);
-        sprintf(icg[ic_idx++], "\tcall i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.special_printf_format_str, i32 0), i32 0, i8 %s)\n", $4.icg_result);
+        sprintf(icg[ic_idx++], "\t%%t%d = getelementptr inbounds [4 x i8], [4 x i8]* @.special_printf_format_str, i32 0, i32 0\n", temp_var);
+        sprintf(icg[ic_idx++], "\tcall i32 (i8*, ...) @printf(i8* %%t%d, i8 %s)\n", temp_var, $4.icg_result);
+        temp_var++;
       }
     | datatype ID { add_to_table('P', $2.name); } '[' value ']' {
         if (strcmp($5.datatype, "i32")) {
@@ -420,9 +444,12 @@ expression
         $$.nd = handle_type_cast(type_exception, $1.nd, $3.nd, $2.name);
         strcpy($$.type, $1.type);
         strcpy($$.datatype, $1.datatype);
-        sprintf($$.name, "t%d", temp_var);
-        temp_var++;
-        sprintf(icg[ic_idx++], "\t%s = %s %s %s\n",  $$.name, $1.name, $2.name, $3.name);
+        sprintf($$.name, "%%t%d", temp_var++);
+        char *loaded_var_1 = load_from_pointer($1.name, $1.type, $1.datatype);
+        char *loaded_var_2 = load_from_pointer($3.name, $3.type, $3.datatype);
+        sprintf(icg[ic_idx++], "\t%s = %s %s %s, %s\n",  $$.name, $2.name, $1.datatype, loaded_var_1, loaded_var_2);
+        free(loaded_var_1);
+        free(loaded_var_2);
 
       }
     | '(' expression ')' {
@@ -430,7 +457,7 @@ expression
         strcpy($$.type, $2.type);
         strcpy($$.datatype, $2.datatype);
         strcpy($$.name, $2.name);
-        sprintf($$.name, "t%d", temp_var);
+        sprintf($$.name, "%%t%d", temp_var);
         temp_var++;
         sprintf(icg[ic_idx++], "\t%s = %s\n",  $$.name, $2.name);
       }
@@ -535,9 +562,8 @@ value // TODO in llvm everything is pointer i guess, so everything must be deref
       }
     | '&' ID {
         strcpy($$.name, $2.name);
-        strcpy($$.icg_result, "%");
+        strcpy($$.icg_result, "* %");
         strcat($$.icg_result, $2.name);
-        strcat($$.icg_result, ".addr");
         const char *id_datatype = get_datatype($2.name);
         strcpy($$.datatype, id_datatype);
         strcpy($$.type, "Pointer");
@@ -547,8 +573,10 @@ value // TODO in llvm everything is pointer i guess, so everything must be deref
       }
     | MUL '(' expression ')' {
         strcpy($$.name, $3.name);
-        strcpy($$.icg_result, "*");
-        strcat($$.icg_result, $3.name);
+        char *loaded_var = load_from_pointer($3.name, $3.type, $3.datatype);
+        sprintf($$.icg_result, "%s", loaded_var);
+        free(loaded_var);
+
         strcpy($$.datatype, $3.datatype);
         strcpy($$.type, "Variable");
         $$.nd = mknode($3.nd, NULL, "dereference");
@@ -561,9 +589,11 @@ value // TODO in llvm everything is pointer i guess, so everything must be deref
         strcpy($$.datatype, $2.datatype);
         strcpy($$.type, $2.type);
         $$.nd = mknode($2.nd, NULL, "unary_minus");
-        sprintf(icg[ic_idx++], "\t%s = 0 - %%%s\n", $2.name, $2.name);
-        strcpy($$.name, $2.name);
-        strcpy($$.icg_result, $2.icg_result);
+        sprintf($$.name, "t%d", temp_var);
+        sprintf($$.icg_result, "%%t%d", temp_var++);
+        char *loaded_var = load_from_pointer($2.icg_result, $2.type, $2.datatype);
+        sprintf(icg[ic_idx++], "\t%s = sub %s 0, %s\n", $$.icg_result, $2.datatype, loaded_var);
+        free(loaded_var);
       }
     ;
 
@@ -581,11 +611,15 @@ argument_expression_section
 arguments_expression
     : value {
         $$.nd = mknode($1.nd, NULL, "arguments_expression");
-        strcpy($$.icg_result, $1.icg_result);
+        char *loaded_var = load_from_pointer($1.icg_result, $1.type, $1.datatype);
+        sprintf($$.icg_result, "%s %s", $1.datatype, loaded_var);
+        free(loaded_var);
       }
     | arguments_expression ',' value {
         $$.nd = mknode($1.nd, $3.nd, "arguments_expression");
-        sprintf($$.icg_result, "%s, %s", $1.icg_result, $3.icg_result);
+        char *loaded_var = load_from_pointer($3.icg_result, $3.type, $3.datatype);
+        sprintf($$.icg_result, "%s, %s %s", $1.icg_result, $3.datatype, loaded_var);
+        free(loaded_var);
       }
     ;
 
@@ -594,7 +628,7 @@ return
         check_return_datatype($3.name);
         $1.nd = mknode(NULL, NULL, "return");
         $$.nd = mknode($1.nd, $3.nd, "RETURN");
-        sprintf(icg[ic_idx++], "\tret %s\n",  $3.icg_result);
+        sprintf(icg[ic_idx++], "\tret %s %s\n",  $3.datatype, $3.icg_result);
       }
     | RETURN { add_to_table('K', "return"); } ';' {
         $$.nd = mknode(NULL, NULL, "RETURN");
@@ -817,6 +851,10 @@ void add_to_table(char symbol, const char *id_name) {
             symbol_table[count].datatype = strdup(datatype);
             symbol_table[count].type = strdup("Pointer");
             break;
+        case 'A':
+            symbol_table[count].datatype = strdup(datatype);
+            symbol_table[count].type = strdup("Argument");
+            break;
         default:
             yyerror("bad symbol");
             return;
@@ -859,6 +897,18 @@ const char *pointer_to_icg_name_datatype(const char *name) {
     return "";
 }
 
+char *load_from_pointer(const char *var_name, const char *type, const char *datatype) {
+    char *new_var = malloc (sizeof (char) * 5);
+    if (!strcmp("Variable", type) || !strcmp("Pointer", type)) {
+        sprintf(new_var, "%%t%d", temp_var);
+        temp_var++;
+        sprintf(icg[ic_idx++], "\t%s = load %s, %s* %s\n", new_var, datatype, datatype, var_name);
+        return new_var;
+    }
+    sprintf(new_var, "%s", var_name);
+    return new_var;
+}
+
 void print_symbol_table() {
     printf("\nSYMBOL\t\t\tDATATYPE\t\tTYPE\t\t\tLINE NUMBER \n");
     printf("____________________________________________________________________________________________\n\n");
@@ -891,7 +941,7 @@ void free_tree(struct node *tree) {
 
 int main() {
     sprintf(icg[ic_idx++], "declare i32 @printf(i8*, ...)\n");
-    sprintf(icg[ic_idx++], "@.special_printf_format_str = constant [4 x i8] c\"%%c\\0A\\00\"\n");
+    sprintf(icg[ic_idx++], "@.special_printf_format_str = constant [2 x i8] c\"%%c\"\n");
     yyparse();
     printf("\n\t\t\t\t\t\t\t\t PHASE 1: LEXICAL ANALYSIS \n\n");
     print_symbol_table();

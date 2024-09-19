@@ -123,7 +123,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 92 "parser.y"
+#line 96 "parser.y"
 
     struct var_name {
         char name[100];
@@ -140,14 +140,14 @@ union YYSTYPE
     struct var_name3 {
         char name[100];
         struct node* nd;
-        char if_body[5];
-        char else_body[5];
-        char next_body[5];
+        char if_body[10];
+        char else_body[10];
+        char next_body[10];
     } nd_obj3;
 
     struct var_name4 {
         char name[100];
-        char icg_result[100];
+        char icg_result[500];
         struct node* nd;
         char datatype[20];
         char type[20];

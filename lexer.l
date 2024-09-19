@@ -50,7 +50,7 @@ digit [0-9]
 [\n]                                { count_n++; }
 .                                   { return *yytext; }
 
-['].[']                             { strcpy(yylval.nd_obj.name,(yytext)); return CHARACTER; }
+['].[']                        { strcpy(yylval.nd_obj.name,(yytext)); return CHARACTER; }
 
 %%
 

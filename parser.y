@@ -407,13 +407,11 @@ statement
         }
         struct node *dereference = mknode($1.nd, $4.nd, "dereference");
         $$.nd = mknode(dereference, $7.nd, "dereference_assignement");
-        // TODO load from pointer z value, zkontrolovat že value je i32 nebo i8, getelement ptr -> budu potřebovat array size od ID, potom store
         char *loaded_value = load_from_pointer($4.icg_result, $4.type, $4.datatype);
         int array_size = get_array_size($1.name);
         int new_temp_var = temp_var++;
         sprintf(icg[ic_idx++], "\t%%t%d = getelementptr inbounds [%d x %s], [%d x %s]* %%%s, %s 0, %s %s\n", new_temp_var, array_size, id_datatype, array_size, id_datatype, $1.name, $7.datatype, $7.datatype, loaded_value);
         free(loaded_value);
-        // TODO load from expression?
         char *loaded_expression = load_from_pointer($7.name, $7.type, $7.datatype);
         sprintf(icg[ic_idx++], "\tstore %s %s, %s* %%t%d\n", $7.datatype, loaded_expression, id_datatype, new_temp_var);
         free(loaded_expression);
@@ -422,20 +420,16 @@ statement
      | ID '(' argument_expression_section ')' { //TODO udělat specialní kategorii function_application a neduplikovat
         check_declaration($1.name);
         const char *id_datatype = get_datatype($1.name);
-        //strcpy($$.datatype, id_datatype);
         const char *id_type = get_type($1.name);
         if (strcmp(id_type, "Function")) {
             sprintf(errors[sem_errors], "Line %d: Name \"%s\" is not a function!\n", count_n, $1.name);
             sem_errors++;
         }
-        //strcpy($$.type, id_type);
         strcpy($$.name, $1.name);
         if (!strcmp(get_datatype($1.name), "void")) {
             sprintf(icg[ic_idx++], "call %s @%s(%s)", get_datatype($1.name), $1.name, $3.icg_result);
-            //strcpy($$.icg_result, "");
         } else {
             sprintf(icg[ic_idx++], "\t%%t%d = call %s @%s(%s)", temp_var, get_datatype($1.name), $1.name, $3.icg_result);
-            //sprintf($$.icg_result, "%%t%d", temp_var);
             temp_var++;
         }
         $$.nd = mknode($3.nd, NULL, $1.name);
@@ -496,17 +490,7 @@ expression
         sprintf(icg[ic_idx++], "\t%s = %s %s %s, %s\n",  $$.name, $2.name, $1.datatype, loaded_var_1, loaded_var_2);
         free(loaded_var_1);
         free(loaded_var_2);
-
       }
-    //| '(' expression ')' {
-    //    $$.nd = $2.nd;
-    //    strcpy($$.type, $2.type);
-    //    strcpy($$.datatype, $2.datatype);
-    //    strcpy($$.name, $2.name);
-    //    sprintf($$.name, "%%t%d", temp_var);
-    //    temp_var++;
-    //    sprintf(icg[ic_idx++], "\t%s = %s\n",  $$.name, $2.name);
-    //  }
     | value {
         $$.nd = $1.nd;
         strcpy($$.type, $1.type);
@@ -640,7 +624,6 @@ value
       }
     | ID '[' value ']' {
         check_declaration($1.name);
-
         // check id
         const char *id_datatype = get_datatype($1.name);
         const char *id_type = get_type($1.name);
@@ -649,27 +632,24 @@ value
             sem_errors++;
         }
         int array_size = get_array_size($1.name);
-
         // check value TODO
         const char *value_datatype = get_datatype($3.name);
         const char *value_type = get_type($3.name);
-
+        // get pointer to array field
         char *loaded_value = load_from_pointer($3.icg_result, $3.type, $3.datatype);
         sprintf(icg[ic_idx++], "\t%%t%d = getelementptr inbounds [%d x %s], [%d x %s]* %%%s, %s 0, %s %s\n", temp_var, array_size, id_datatype, array_size, id_datatype, $1.name, value_datatype, value_datatype, loaded_value);
         free(loaded_value);
-
+        // load
         char new_ptr[5];
         sprintf(new_ptr, "%%t%d", temp_var);
          temp_var++;
-        // TODO mam dělt load new_ptr? nebo vrátit new ptr, možná vlastně pointer, protože load potom dělají ty věci co to používají
         sprintf(icg[ic_idx++], "\t%%t%d = load %s, %s* %s\n", temp_var, id_datatype, id_datatype, new_ptr);
-
+        // set node vars
         sprintf($$.icg_result, "%%t%d", temp_var);
         sprintf($$.name, "t%d", temp_var);
         strcpy($$.type, "Pointer");
         strcpy($$.datatype, id_datatype);
         temp_var++;
-
         $$.nd = mknode($3.nd, NULL, "array_dereference");
       }
     | SUB value {

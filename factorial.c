@@ -8,8 +8,7 @@ int main() {
         return 1;
     } else {
         for (i = 1; i <= input; i = i + 1) {
-            int idx = i - 1;
-            fact = fact * idx;
+            fact = fact * i;
         }
         for (i = 0; i < fact; i = i + 1) {
             putchar('f');

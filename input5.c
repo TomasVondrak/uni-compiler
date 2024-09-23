@@ -13,8 +13,7 @@ int main() {
 	int pole[10];
 	int var1;
 	for (int i = 0; i < 20; i = i + 1) {
-        int b = i - 1; // TODO jak to udělat, aby tam toto nemuselo být
-		ahoj(b, 'a');
+		ahoj(i, 'a');
 	}
 	int var = *(pole);
 	int *var2 = &var1;

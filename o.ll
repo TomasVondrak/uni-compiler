@@ -98,11 +98,9 @@ entry:
 	%t10 = load i32, i32* %pole_size
 	%t9 = sub i32 %t10, 1
 	store i32 %t9, i32* %smaller_size
-	%idx = alloca i32
 	%i = alloca i32
 	%j = alloca i32
 	%current = alloca i32
-	%jdx = alloca i32
 	%res = alloca i32
 	%left = alloca i32
 	%right = alloca i32
@@ -119,193 +117,226 @@ L21:
 	%t13 = icmp slt i32 %t11, %t12
 	br i1 %t13, label %L22, label %L23
 
-L22:
+L24:
 	%t15 = load i32, i32* %i
 	%t14 = add i32 %t15, 1
 	store i32 %t14, i32* %i
-	%t17 = load i32, i32* %i
-	%t16 = sub i32 %t17, 1
-	store i32 %t16, i32* %idx
-	%t18 = load i32, i32* %idx
-	%t19 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t18
-	store i32 0, i32* %t19
 	br label %L21
+
+L22:
+	%t16 = load i32, i32* %i
+	%t17 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t16
+	store i32 0, i32* %t17
+	br label %L24
 
 L23:
 	%last_index = alloca i32
-	%t22 = load i32, i32* %pole_size
-	%t21 = sub i32 %t22, 1
-	store i32 %t21, i32* %last_index
-	%t23 = load i32, i32* %last_index
-	%t24 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t23
-	store i32 1, i32* %t24
+	%t20 = load i32, i32* %pole_size
+	%t19 = sub i32 %t20, 1
+	store i32 %t19, i32* %last_index
+	%t21 = load i32, i32* %last_index
+	%t22 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t21
+	store i32 1, i32* %t22
 	store i32 0, i32* %i
-	br label %L24
-
-L24:
-	%t26 = load i32, i32* %i
-	%t27 = load i32, i32* %pole_size
-	%t28 = icmp slt i32 %t26, %t27
-	br i1 %t28, label %L25, label %L26
+	br label %L25
 
 L25:
-	%t30 = load i32, i32* %i
-	%t29 = add i32 %t30, 1
-	store i32 %t29, i32* %i
-	%t32 = load i32, i32* %i
-	%t31 = sub i32 %t32, 1
-	store i32 %t31, i32* %idx
-	%t33 = load i32, i32* %idx
-	%t34 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t33
-	%t35 = load i32, i32* %t34
-	store i32 %t35, i32* %current
-	%t36 = load i32, i32* %current
-	%t37 = icmp eq i32 %t36, 0
-	br i1 %t37, label %L27, label %L28
-
-L27:
-	%t38 = getelementptr inbounds [2 x i8], [2 x i8]* @.special_printf_format_char, i32 0, i32 0
-	call i32 (i8*, ...) @printf(i8* %t38, i8 32)
-	br label %L29
+	%t24 = load i32, i32* %i
+	%t25 = load i32, i32* %pole_size
+	%t26 = icmp slt i32 %t24, %t25
+	br i1 %t26, label %L26, label %L27
 
 L28:
-	%t39 = getelementptr inbounds [2 x i8], [2 x i8]* @.special_printf_format_char, i32 0, i32 0
-	call i32 (i8*, ...) @printf(i8* %t39, i8 88)
-	br label %L29
-
-L29:
-	br label %L24
+	%t28 = load i32, i32* %i
+	%t27 = add i32 %t28, 1
+	store i32 %t27, i32* %i
+	br label %L25
 
 L26:
-	%t40 = getelementptr inbounds [2 x i8], [2 x i8]* @.special_printf_format_char, i32 0, i32 0
-	call i32 (i8*, ...) @printf(i8* %t40, i8 10)
-	store i32 0, i32* %i
-	br label %L30
+	%t29 = load i32, i32* %i
+	%t30 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t29
+	%t31 = load i32, i32* %t30
+	store i32 %t31, i32* %current
+	%t32 = load i32, i32* %current
+	%t33 = icmp eq i32 %t32, 0
+	br i1 %t33, label %L29, label %L30
+
+L29:
+	%t34 = getelementptr inbounds [2 x i8], [2 x i8]* @.special_printf_format_char, i32 0, i32 0
+	call i32 (i8*, ...) @printf(i8* %t34, i8 32)
+	br label %L31
 
 L30:
-	%t41 = load i32, i32* %i
-	%t42 = load i32, i32* %iteration_count
-	%t43 = icmp slt i32 %t41, %t42
-	br i1 %t43, label %L31, label %L32
+	%t35 = getelementptr inbounds [2 x i8], [2 x i8]* @.special_printf_format_char, i32 0, i32 0
+	call i32 (i8*, ...) @printf(i8* %t35, i8 88)
+	br label %L31
 
 L31:
-	%t45 = load i32, i32* %i
-	%t44 = add i32 %t45, 1
-	store i32 %t44, i32* %i
-	store i32 1, i32* %j
-	br label %L33
+	br label %L28
 
-L33:
-	%t46 = load i32, i32* %j
-	%t47 = load i32, i32* %smaller_size
-	%t48 = icmp slt i32 %t46, %t47
-	br i1 %t48, label %L34, label %L35
+L27:
+	%t36 = getelementptr inbounds [2 x i8], [2 x i8]* @.special_printf_format_char, i32 0, i32 0
+	call i32 (i8*, ...) @printf(i8* %t36, i8 10)
+	store i32 0, i32* %i
+	br label %L32
 
-L34:
-	%t50 = load i32, i32* %j
-	%t49 = add i32 %t50, 1
-	store i32 %t49, i32* %j
-	%t52 = load i32, i32* %j
-	%t51 = sub i32 %t52, 1
-	store i32 %t51, i32* %jdx
-	%t53 = load i32, i32* %jdx
-	%t54 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t53
-	%t55 = load i32, i32* %t54
-	store i32 %t55, i32* %center
-	%t57 = load i32, i32* %jdx
-	%t56 = sub i32 %t57, 1
-	store i32 %t56, i32* %lefter
-	%t58 = load i32, i32* %lefter
-	%t59 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t58
-	%t60 = load i32, i32* %t59
-	store i32 %t60, i32* %left
-	%t62 = load i32, i32* %jdx
-	%t61 = add i32 %t62, 1
-	store i32 %t61, i32* %righter
-	%t63 = load i32, i32* %righter
-	%t64 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t63
-	%t65 = load i32, i32* %t64
-	store i32 %t65, i32* %right
-	%t66 = load i32, i32* %left
-	%t67 = load i32, i32* %center
-	%t68 = load i32, i32* %right
-	%t69 = call i32 @rule_application(i32 %t66, i32 %t67, i32 %t68)	store i32 %t69, i32* %res
-	%t70 = load i32, i32* %jdx
-	%t71 = getelementptr inbounds [150 x i32], [150 x i32]* %new_pole, i32 0, i32 %t70
-	%t72 = load i32, i32* %res
-	store i32 %t72, i32* %t71
-	br label %L33
+L32:
+	%t37 = load i32, i32* %i
+	%t38 = load i32, i32* %iteration_count
+	%t39 = icmp slt i32 %t37, %t38
+	br i1 %t39, label %L33, label %L34
 
 L35:
-	store i32 0, i32* %j
+	%t41 = load i32, i32* %i
+	%t40 = add i32 %t41, 1
+	store i32 %t40, i32* %i
+	br label %L32
+
+L33:
+	store i32 1, i32* %j
 	br label %L36
 
 L36:
-	%t74 = load i32, i32* %j
-	%t75 = load i32, i32* %pole_size
-	%t76 = icmp slt i32 %t74, %t75
-	br i1 %t76, label %L37, label %L38
+	%t42 = load i32, i32* %j
+	%t43 = load i32, i32* %pole_size
+	%t44 = icmp slt i32 %t42, %t43
+	br i1 %t44, label %L37, label %L38
+
+L39:
+	%t46 = load i32, i32* %j
+	%t45 = add i32 %t46, 1
+	store i32 %t45, i32* %j
+	br label %L36
 
 L37:
-	%t78 = load i32, i32* %j
-	%t77 = add i32 %t78, 1
-	store i32 %t77, i32* %j
-	%t80 = load i32, i32* %j
-	%t79 = sub i32 %t80, 1
-	store i32 %t79, i32* %jdx
-	%t81 = load i32, i32* %jdx
-	%t82 = getelementptr inbounds [150 x i32], [150 x i32]* %new_pole, i32 0, i32 %t81
-	%t83 = load i32, i32* %t82
-	store i32 %t83, i32* %temp
-	%t84 = load i32, i32* %jdx
-	%t85 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t84
-	%t86 = load i32, i32* %temp
-	store i32 %t86, i32* %t85
-	br label %L36
+	%t47 = load i32, i32* %j
+	%t48 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t47
+	%t49 = load i32, i32* %t48
+	store i32 %t49, i32* %center
+	%t50 = load i32, i32* %j
+	%t51 = icmp eq i32 %t50, 0
+	br i1 %t51, label %L40, label %L41
+
+L40:
+	%t52 = load i32, i32* %smaller_size
+	%t53 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t52
+	%t54 = load i32, i32* %t53
+	store i32 %t54, i32* %left
+	br label %L42
+
+L41:
+	%t56 = load i32, i32* %j
+	%t55 = sub i32 %t56, 1
+	store i32 %t55, i32* %lefter
+	%t57 = load i32, i32* %lefter
+	%t58 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t57
+	%t59 = load i32, i32* %t58
+	store i32 %t59, i32* %left
+	br label %L42
+
+L42:
+	%t60 = load i32, i32* %j
+	%t61 = load i32, i32* %smaller_size
+	%t62 = icmp eq i32 %t60, %t61
+	br i1 %t62, label %L43, label %L44
+
+L43:
+	%t63 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 0
+	%t64 = load i32, i32* %t63
+	store i32 %t64, i32* %right
+	br label %L45
+
+L44:
+	%t66 = load i32, i32* %j
+	%t65 = add i32 %t66, 1
+	store i32 %t65, i32* %righter
+	%t67 = load i32, i32* %righter
+	%t68 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t67
+	%t69 = load i32, i32* %t68
+	store i32 %t69, i32* %right
+	br label %L45
+
+L45:
+	%t70 = load i32, i32* %left
+	%t71 = load i32, i32* %center
+	%t72 = load i32, i32* %right
+	%t73 = call i32 @rule_application(i32 %t70, i32 %t71, i32 %t72)	store i32 %t73, i32* %res
+	%t74 = load i32, i32* %j
+	%t75 = getelementptr inbounds [150 x i32], [150 x i32]* %new_pole, i32 0, i32 %t74
+	%t76 = load i32, i32* %res
+	store i32 %t76, i32* %t75
+	br label %L39
 
 L38:
 	store i32 0, i32* %j
-	br label %L39
+	br label %L46
 
-L39:
-	%t88 = load i32, i32* %j
-	%t89 = load i32, i32* %pole_size
-	%t90 = icmp slt i32 %t88, %t89
-	br i1 %t90, label %L40, label %L41
+L46:
+	%t78 = load i32, i32* %j
+	%t79 = load i32, i32* %pole_size
+	%t80 = icmp slt i32 %t78, %t79
+	br i1 %t80, label %L47, label %L48
 
-L40:
-	%t92 = load i32, i32* %j
-	%t91 = add i32 %t92, 1
-	store i32 %t91, i32* %j
+L49:
+	%t82 = load i32, i32* %j
+	%t81 = add i32 %t82, 1
+	store i32 %t81, i32* %j
+	br label %L46
+
+L47:
+	%t83 = load i32, i32* %j
+	%t84 = getelementptr inbounds [150 x i32], [150 x i32]* %new_pole, i32 0, i32 %t83
+	%t85 = load i32, i32* %t84
+	store i32 %t85, i32* %temp
+	%t86 = load i32, i32* %j
+	%t87 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t86
+	%t88 = load i32, i32* %temp
+	store i32 %t88, i32* %t87
+	br label %L49
+
+L48:
+	store i32 0, i32* %j
+	br label %L50
+
+L50:
+	%t90 = load i32, i32* %j
+	%t91 = load i32, i32* %pole_size
+	%t92 = icmp slt i32 %t90, %t91
+	br i1 %t92, label %L51, label %L52
+
+L53:
 	%t94 = load i32, i32* %j
-	%t93 = sub i32 %t94, 1
-	store i32 %t93, i32* %jdx
-	%t95 = load i32, i32* %jdx
+	%t93 = add i32 %t94, 1
+	store i32 %t93, i32* %j
+	br label %L50
+
+L51:
+	%t95 = load i32, i32* %j
 	%t96 = getelementptr inbounds [150 x i32], [150 x i32]* %pole, i32 0, i32 %t95
 	%t97 = load i32, i32* %t96
 	store i32 %t97, i32* %current
 	%t98 = load i32, i32* %current
 	%t99 = icmp eq i32 %t98, 0
-	br i1 %t99, label %L42, label %L43
+	br i1 %t99, label %L54, label %L55
 
-L42:
+L54:
 	%t100 = getelementptr inbounds [2 x i8], [2 x i8]* @.special_printf_format_char, i32 0, i32 0
 	call i32 (i8*, ...) @printf(i8* %t100, i8 32)
-	br label %L44
+	br label %L56
 
-L43:
+L55:
 	%t101 = getelementptr inbounds [2 x i8], [2 x i8]* @.special_printf_format_char, i32 0, i32 0
 	call i32 (i8*, ...) @printf(i8* %t101, i8 88)
-	br label %L44
+	br label %L56
 
-L44:
-	br label %L39
+L56:
+	br label %L53
 
-L41:
+L52:
 	%t102 = getelementptr inbounds [2 x i8], [2 x i8]* @.special_printf_format_char, i32 0, i32 0
 	call i32 (i8*, ...) @printf(i8* %t102, i8 10)
-	br label %L30
+	br label %L35
 
-L32:
+L34:
 	ret i32 0
 }

@@ -112,6 +112,7 @@
         char if_body[10];
         char else_body[10];
         char next_body[10];
+        char increment_body[10];
     } nd_obj3;
 
     struct var_name4 {
@@ -261,12 +262,15 @@ item
         new_scope();
         is_for = 1;
       } '(' statement ';' condition ';' {
+        sprintf(icg[ic_idx++], "\n%s:\n", $6.increment_body);
+      } statement ')' {
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", $6.else_body);
         sprintf(icg[ic_idx++], "\n%s:\n", $6.if_body);
-      } statement ')' compound_statement {
+      } compound_statement {
         struct node *temp = mknode($6.nd, $9.nd, "CONDITION");
         struct node *temp2 = mknode($4.nd, temp, "CONDITION");
-        $$.nd = mknode(temp2, $11.nd, $1.name);
-        sprintf(icg[ic_idx++], "\tbr label %%%s\n", $6.else_body);
+        $$.nd = mknode(temp2, $12.nd, $1.name);
+        sprintf(icg[ic_idx++], "\tbr label %%%s\n", $6.increment_body);
         sprintf(icg[ic_idx++], "\n%s:\n", $6.next_body);
         end_of_scope();
       }
@@ -333,6 +337,7 @@ condition
             temp_var++;
             label++;
             sprintf($$.next_body, "L%d", label++);
+            sprintf($$.increment_body, "L%d", label++);
         } else {
             loaded_var_1 = load_from_pointer($1.name, $1.type, $1.datatype);
             loaded_var_2 = load_from_pointer($3.name, $3.type, $3.datatype);
@@ -387,7 +392,7 @@ statement
         const char *id_datatype = get_datatype($1.name);
         int type_exception = check_types(id_datatype, $4.datatype);
         $$.nd = handle_type_cast(type_exception, $1.nd, $4.nd, "assignement");
-        sprintf(icg[ic_idx++], "\tstore %s %s, %s* %%%s\n", $4.datatype, $4.name, get_datatype($1.name), $1.name);
+        sprintf(icg[ic_idx++], "\tstore %s %s, %s* %%%s\n", get_datatype($1.name), $4.name, get_datatype($1.name), $1.name);
       }
     | MUL '(' expression ')' '=' expression {
         if (strcmp($3.type, "Pointer") || strcmp($3.datatype, $6.datatype)) {
@@ -464,7 +469,7 @@ statement
     ;
 
 init
-    : '=' expression {
+    : '=' expression { // TODO, zde by se to mělo loadovat ta expression, a v epxression by se to tím pádem mělo ukládat do pointru, aby dávalo smysl to loadovat, takhle to není stejné u value a epxression a pak je v tom bordel
         $$.nd = $2.nd;
         strcpy($$.type, $2.type);
         strcpy($$.datatype, $2.datatype);
@@ -1040,7 +1045,7 @@ int main() {
 	printf("\n\n");
 	printf("\n\t\t\t\t\t\t\t\t PHASE 4: INTERMEDIATE CODE GENERATION \n");
 	printf("\n");
-	print_icg();
+	// print_icg();
 	print_icg_in_file();
 	printf("\n");
 }

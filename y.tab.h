@@ -143,6 +143,7 @@ union YYSTYPE
         char if_body[10];
         char else_body[10];
         char next_body[10];
+        char increment_body[10];
     } nd_obj3;
 
     struct var_name4 {
@@ -153,7 +154,7 @@ union YYSTYPE
         char type[20];
     } nd_obj4;
 
-#line 157 "y.tab.h"
+#line 158 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
